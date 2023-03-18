@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1026747960174",
+    "project_id": "carparking-373000",
+    "storage_bucket": "carparking-373000.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026747960174:android:b7de60658b36ae6734cf7f",
+        "android_client_info": {
+          "package_name": "com.example.caparking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026747960174-42lc0b4ip2uf76c2j5m60hukgf7dr160.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.caparking",
+            "certificate_hash": "fe480326ad4ae8f12f07cf230ef10b6b4506ceec"
+          }
+        },
+        {
+          "client_id": "1026747960174-himel3o5dbmbogelplvl9cm80n42d7ef.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSh8YkSJ3EuFAOne6C5T0XoN9s8W71VVo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026747960174-himel3o5dbmbogelplvl9cm80n42d7ef.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
