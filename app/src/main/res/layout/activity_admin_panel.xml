@@ -80,13 +80,13 @@
 
     <ImageView
         android:id="@+id/imageView8"
-        android:layout_width="328dp"
-        android:layout_height="248dp"
+        android:layout_width="409dp"
+        android:layout_height="249dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.162"
-        app:srcCompat="@drawable/adminpanel" />
+        app:srcCompat="@drawable/car_parking" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

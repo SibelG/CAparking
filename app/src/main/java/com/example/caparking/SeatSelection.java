@@ -61,7 +61,17 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
     c11,c12,c13,c14,c15,c16,c17,c18,c19,c20,c21,c22,c23,c24,c25,
     c26,c27,c28,c29,c30,c31,c32;
     private ActivitySeatSelectionBinding binding;
+    private DatePickerDialog datePickerDialog2;
+    private DatePickerDialog datePickerDialog3;
 
+    //current date
+    private int year;
+    private int month;
+    private int day;
+
+    //id of date picker controls
+    private final int ROUND_DEPARTURE_DATE_PICKER = R.id.btnRoundDepartureDatePicker;
+    private final int ROUND_RETURN_DATE_PICKER = R.id.btnRoundReturnDatePicker;
 
     
     @Override
@@ -128,52 +138,7 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
             }
         });
 
-       /* chooseDepartureTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                calendar = Calendar.getInstance();
-                currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-                currentMinute = calendar.get(Calendar.MINUTE);
 
-                timePickerDialog = new TimePickerDialog(SeatSelection.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
-                        if (hourOfDay >= 12) {
-                            amPm = "PM";
-                        } else {
-                            amPm = "AM";
-                        }
-                        chooseDepartureTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
-                    }
-                }, currentHour, currentMinute, false);
-
-                timePickerDialog.show();
-            }
-        });
-
-
-        chooseArrivalTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                calendar = Calendar.getInstance();
-                currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-                currentMinute = calendar.get(Calendar.MINUTE);
-
-                timePickerDialog = new TimePickerDialog(SeatSelection.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
-                        if (hourOfDay >= 12) {
-                            amPm = "PM";
-                        } else {
-                            amPm = "AM";
-                        }
-                        chooseArrivalTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
-                    }
-                }, currentHour, currentMinute, false);
-
-                timePickerDialog.show();
-            }
-        });*/
         binding.totalFare.setText("$"+String.valueOf(HelperUtilities.calculateTotalFare(12.5,2)));
     }
 
@@ -594,6 +559,28 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    public DatePickerDialog datePickerDialog(int datePickerId) {
+
+        switch (datePickerId) {
+
+            case ROUND_DEPARTURE_DATE_PICKER:
+
+                if (datePickerDialog2 == null) {
+                    datePickerDialog2 = new DatePickerDialog(this, getRoundDepartureDatePickerListener(), year, month, day);
+                }
+                datePickerDialog2.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                return datePickerDialog2;
+
+            case ROUND_RETURN_DATE_PICKER:
+
+                if (datePickerDialog3 == null) {
+                    datePickerDialog3 = new DatePickerDialog(this, getRoundReturnDatePickerListener(), year, month, day);
+                }
+                datePickerDialog3.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                return datePickerDialog3;
+        }
+        return null;
+    }
     public Dialog bookFlightDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(SeatSelection.this);
@@ -624,7 +611,7 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
 
 
 
-    public DatePickerDialog.OnDateSetListener getDepartureDatePickerListener() {
+    public DatePickerDialog.OnDateSetListener getRoundDepartureDatePickerListener() {
         return new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int startYear, int startMonth, int startDay) {
