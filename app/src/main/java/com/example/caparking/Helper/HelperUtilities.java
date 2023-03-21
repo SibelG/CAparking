@@ -118,6 +118,12 @@ public class HelperUtilities {
         Calendar c = Calendar.getInstance();
         return c.get(Calendar.DAY_OF_MONTH);
     }
+    public static String currentDate(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        Calendar cal = Calendar.getInstance();
+        return sdf.format(cal.getTime());
+
+    }
 
     public static String maskCardNumber(String cardNumber) {
 

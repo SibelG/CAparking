@@ -20,4 +20,5 @@
     <color name="backgroundDefault">#FFFFFF</color>
     <color name="backgroundLightGray">#EEEEEE</color>
     <color name="skyBlue">#4EBEF1</color>
+    <color name="primary_text">#212121</color>
 </resources>

@@ -12,12 +12,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.caparking.Helper.DBHelper;
 
-public class adminpanel extends AppCompatActivity {
+public class AdminPanel extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_adminpanel);
+        setContentView(R.layout.activity_admin_panel);
 
         Button add = findViewById(R.id.add);
         Button update=findViewById(R.id.update);
@@ -26,18 +26,18 @@ public class adminpanel extends AppCompatActivity {
         Button end = findViewById(R.id.logout);
         DBHelper DB = new DBHelper(this);
 
-        /*add.setOnClickListener(new View.OnClickListener() {
+        add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), addbus.class);
+                Intent intent = new Intent(getApplicationContext(), UpdateParkingArea.class);
                 startActivity(intent);
             }
         });
 
-        update.setOnClickListener(new View.OnClickListener() {
+        /*update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), updatebus.class);
+                Intent intent = new Intent(getApplicationContext(), UpdateParking.class);
                 startActivity(intent);
             }
         });
@@ -45,7 +45,7 @@ public class adminpanel extends AppCompatActivity {
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), deletebus.class);
+                Intent intent = new Intent(getApplicationContext(), DeleteParking.class);
                 startActivity(intent);
             }
         });*/
@@ -55,7 +55,7 @@ public class adminpanel extends AppCompatActivity {
             public void onClick(View v) {
                 Cursor result = DB.viewParkingAreas();
                 if (result.getCount()==0){
-                    Toast.makeText(adminpanel.this, "No Entry Exists", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AdminPanel.this, "No Entry Exists", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 StringBuffer buffer = new StringBuffer();
@@ -66,7 +66,7 @@ public class adminpanel extends AppCompatActivity {
                     buffer.append("Date :"+result.getString(3)+"\n");
                     buffer.append("Total Seats :"+result.getString(4)+"\n\n");
                 }
-                AlertDialog.Builder builder = new AlertDialog.Builder(adminpanel.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(AdminPanel.this);
                 builder.setCancelable(true);
                 builder.setTitle("ALL PARKING DETAILS");
                 builder.setMessage(buffer.toString());

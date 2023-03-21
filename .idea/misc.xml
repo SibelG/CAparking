@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/drawable/bgrounded.xml" value="0.1" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/drawable/ic_baseline_add_location_alt_24.xml" value="0.1" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/drawable/ic_baseline_event_seat_24.xml" value="0.1" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/drawable/ic_baseline_keyboard_arrow_up_24.xml" value="0.1" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/drawable/ic_baseline_local_parking_24.xml" value="0.1" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/drawable/ic_baseline_price_change_24.xml" value="0.1" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/drawable/ic_baseline_price_check_24.xml" value="0.1" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_add_park.xml" value="0.1" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_add_parking.xml" value="0.2" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_addparkingarea.xml" value="0.1" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_admin_login.xml" value="0.21851851851851853" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_admin_panel.xml" value="0.2" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_admin_signup.xml" value="0.21851851851851853" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_adminlogin.xml" value="0.24615384615384617" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_adminpanel.xml" value="0.1" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_adminsignup.xml" value="0.24615384615384617" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_login.xml" value="0.21851851851851853" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_main.xml" value="0.21851851851851853" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_maps.xml" value="0.25" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_purchase.xml" value="0.1" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_seat_selection.xml" value="0.18425925925925926" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_signup.xml" value="0.21851851851851853" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_update_parking.xml" value="0.2" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/activity_view_place.xml" value="0.19114583333333332" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/bottom_sheet_dialog_layout.xml" value="0.2" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/layout/item_row.xml" value="0.2" />
+        <entry key="..\:/Users/sblgn/AndroidStudioProjects/CAparking/app/src/main/res/menu/bottom_menu.xml" value="0.21851851851851853" />
+      </map>
+    </option>
+  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
+</project>

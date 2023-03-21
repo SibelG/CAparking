@@ -8,7 +8,7 @@
     android:gravity="center"
     android:background="#FFFFFF"
     android:padding="30dp"
-    tools:context=".adminlogin">
+    tools:context=".AdminLogin">
 
     <TextView
         android:id="@+id/textView4"

@@ -13,8 +13,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.caparking.Common.Common;
+import com.example.caparking.Helper.DBHelper;
 import com.example.caparking.Model.PlaceDetail;
 import com.example.caparking.Remote.IGoogleAPIService;
+import com.example.caparking.util.SessionManager;
 import com.squareup.picasso.Picasso;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,24 +26,24 @@ public class ViewPlaceActivity extends AppCompatActivity {
 
     ImageView photo;
     RatingBar ratingBar;
-    Button btnViewOnMap,btnViewDirection;
+    Button btnViewOnMap;
     TextView place_name,place_address,opening_hours,pAddress,pName;
-
+    SessionManager manager;
     IGoogleAPIService mService;
-
+    DBHelper DB;
     PlaceDetail mPlace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_place);
-
+        DB = new DBHelper(this);
         photo = findViewById(R.id.photo);
 
         ratingBar = findViewById(R.id.ratingBar);
 
         btnViewOnMap = findViewById(R.id.btnShowMap);
-        btnViewDirection = findViewById(R.id.btnViewDirection);
+
 
         place_address = findViewById(R.id.places_address);
         place_name = findViewById(R.id.places_name);
@@ -54,13 +56,7 @@ public class ViewPlaceActivity extends AppCompatActivity {
         place_name.setText("");
         place_address.setText("");
         opening_hours.setText("");
-
-        btnViewDirection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ViewPlaceActivity.this,ViewDirection.class));
-            }
-        });
+        manager=new SessionManager(getApplicationContext());
 
         btnViewOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,6 +130,8 @@ public class ViewPlaceActivity extends AppCompatActivity {
     }
 
     public void parkingSlot(View view) {
+        int id = DB.GetLocId(place_name.getText().toString());
+        manager.createParkingSession(id);
         Intent intent = new Intent(getApplicationContext(), SeatSelection.class);
         startActivity(intent);
     }

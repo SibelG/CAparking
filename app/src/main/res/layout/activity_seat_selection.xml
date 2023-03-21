@@ -133,28 +133,39 @@
                                 android:layout_weight="60"
                                 android:orientation="vertical">
 
-                                <EditText
-                                    android:id="@+id/departureTime"
+                                <Button
+                                    android:id="@+id/btnRoundDepartureDatePicker"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:drawableTint="#5C4C4C"
-                                    android:fontFamily="@font/calibri"
-                                    android:hint="Select Departure Time"
-                                    android:textColor="#000000"
-                                    android:textColorHint="#817272"
-                                    android:textStyle="bold" />
+                                    android:layout_gravity="start"
+                                    android:layout_marginBottom="10dp"
+                                    android:backgroundTint="#EAE9E9"
+                                    android:drawableLeft="@drawable/ic_baseline_date_range_24"
+                                    android:drawablePadding="15dp"
+                                    android:fontFamily="sans-serif"
+                                    android:padding="15dp"
+                                    android:text="@string/prompt_departure_date"
+                                    android:textAlignment="textStart"
+                                    android:textAllCaps="false"
+                                    android:textColor="@color/colorMediumGray"
+                                    android:textSize="18sp" />
 
-                                <EditText
-                                    android:id="@+id/arrivalTime"
+                                <Button
+                                    android:id="@+id/btnRoundReturnDatePicker"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="4dp"
-                                    android:layout_marginBottom="4dp"
-                                    android:fontFamily="@font/calibri"
-                                    android:hint="Select Arrival Time"
-                                    android:textColor="#4b4b4b"
-                                    android:textColorHint="#807171"
-                                    android:textStyle="bold" />
+                                    android:layout_gravity="start"
+                                    android:layout_marginBottom="10dp"
+                                    android:backgroundTint="#EAE9E9"
+                                    android:drawableLeft="@drawable/ic_baseline_date_range_24"
+                                    android:drawablePadding="15dp"
+                                    android:fontFamily="sans-serif"
+                                    android:padding="15dp"
+                                    android:text="@string/prompt_return_date"
+                                    android:textAlignment="textStart"
+                                    android:textAllCaps="false"
+                                    android:textColor="@color/colorMediumGray"
+                                    android:textSize="18sp" />
 
                                 <TextView
                                     android:layout_width="match_parent"
@@ -173,6 +184,7 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:id="@+id/totalFare"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/calibri"

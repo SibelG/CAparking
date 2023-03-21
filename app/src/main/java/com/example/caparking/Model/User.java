@@ -1,16 +1,22 @@
 package com.example.caparking.Model;
 
 public class User {
-    public String name,address,phoneNumber;
+    private String name;
+    private String email;
+    private String password;
+    private String fullname;
 
     public User() {
     }
 
-    public User(String name, String address, String phoneNumber) {
-        this.name = name;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
+    public User(String name,String email,String password,String fullname){
+        this.name=name;
+        this.email=email;
+        this.password=password;
+        this.fullname=fullname;
     }
+
+
 
     public String getName() {
         return name;
@@ -20,19 +26,27 @@ public class User {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public String getEmail() {
+        return email;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 }

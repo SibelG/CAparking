@@ -11,4 +11,12 @@
     <string name="open_now">Open Now :</string>
     <string name="place_address">Place Address</string>
     <string name="place_name">Place Name</string>
+    <string name="purchase_history">Purchase History</string>
+    <string name="purchase_amount">Amount</string>
+    <string name="purchase_paid">Paid</string>
+    <string name="purchase_location_date">Date</string>
+    <string name="purchase_end_session">End Session</string>
+    <string name="home_location">Location</string>
+    <string name="prompt_return_date">Return Date</string>
+    <string name="prompt_departure_date">Departure Date</string>
 </resources>

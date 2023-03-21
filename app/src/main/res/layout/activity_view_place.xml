@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/customborder"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/customborder"
     tools:context=".ViewPlaceActivity">
+    <ScrollView
 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:orientation="vertical">
 
@@ -69,22 +74,9 @@
                 android:textStyle="italic"
                 app:cornerRadius="8dp" />
 
-            <Button
-                android:id="@+id/btnViewDirection"
-                style="@style/Widget.AppCompat.Button.Colored"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_marginTop="20dp"
-                android:text="@string/view_direction"
-                android:textColor="@android:color/black"
-                android:textSize="20sp"
-                android:textStyle="italic"
-                app:cornerRadius="8dp" />
-
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="82dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:backgroundTint="#7FC1F6">
 
@@ -172,5 +164,5 @@
         </LinearLayout>
 
     </LinearLayout>
-
+    </ScrollView>
 </RelativeLayout>

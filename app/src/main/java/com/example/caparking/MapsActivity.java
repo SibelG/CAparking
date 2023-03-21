@@ -67,12 +67,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker mMarker;
     private LocationRequest mLocationRequest;
     IGoogleAPIService mService;
-
+    DBHelper DB = new DBHelper(this);
     MyPlaces currentPlaces;
 
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationCallback locationCallback;
-    DBHelper DB = new DBHelper(this);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mService = Common.getGoogleAPIService();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            checkLocationPermission();
+            Common.checkLocationPermission(this);
         }
 
         //nearByPlaces("parking");
@@ -179,7 +179,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void nearByPlaces(final String placeType) {
         if(mMap!=null) {
             mMap.clear();
-            String url = getUrl(latitude, longitude, placeType);
+            String url = Common.getUrl(latitude, longitude, placeType);
 
             mService.getNearByPlaces(url)
                     .enqueue(new Callback<MyPlaces>() {
@@ -204,6 +204,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     markerOptions.title(placeName);
                                     Log.d("T", placeName);
 
+                                    insertAreas(32,12.5,placeName);
                                     if (placeType.equals("parking")) {
                                         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.parking));
                                     } else {
@@ -229,43 +230,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private String getUrl(double latitude, double longitude, String placeType) {
-        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=parking");
-        googlePlacesUrl.append("&location="+latitude+","+longitude);
-        googlePlacesUrl.append("&radius="+10000);
-        googlePlacesUrl.append("&type="+placeType);
-        googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=AIzaSyAgjvl_cLGKpKOJ85WC3BpzVT_dv_tLOwI");
-
-        Log.d("getUrl",googlePlacesUrl.toString());
-
-        return googlePlacesUrl.toString();
-    }
-
-    private boolean checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                ActivityCompat.requestPermissions(this,new String[]{
-
-                        android.Manifest.permission.ACCESS_FINE_LOCATION
-
-                },MY_PERMISSION_CODE);
-            }
-            else    {
-                ActivityCompat.requestPermissions(this,new String[]{
-
-                        Manifest.permission.ACCESS_FINE_LOCATION
-
-                },MY_PERMISSION_CODE);
-            }
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -315,7 +279,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (marker.getSnippet() != null) {
 
                     Common.currentResults = currentPlaces.getResults()[Integer.parseInt(marker.getSnippet())];
-                    insertLocation(Common.currentResults.getName());
 
                     startActivity(new Intent(MapsActivity.this, ViewPlaceActivity.class));
                 }
@@ -324,13 +287,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    private void insertLocation(String locationName) {
-        Cursor cursor = DB.selectLocationName(HelperUtilities.filter(locationName));
+    private void insertAreas(int total_seats,double perHourPrice, String locationName) {
 
-        if (cursor != null && cursor.getCount() > 0) {
-            return;
-        }else{
-            Boolean insert = DB.insertParkingLocation(locationName);
+        Boolean checkLocation = DB.checkLocations(locationName);
+
+        if (checkLocation==false){
+            Boolean insert = DB.insertAreas(total_seats,perHourPrice,locationName);
             if (insert == true) {
                 Toast.makeText(this, "Registered Successfully", Toast.LENGTH_SHORT).show();
             } else {

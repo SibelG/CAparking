@@ -11,13 +11,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.caparking.Helper.DBHelper;
 
-public class adminsignup extends AppCompatActivity {
+public class AdminSignup extends AppCompatActivity {
 
     private boolean isValid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_adminsignup);
+        setContentView(R.layout.activity_admin_signup);
 
         Button btnsignup = findViewById(R.id.btn1);
         Button btnsignin = findViewById(R.id.btn2);
@@ -38,28 +38,28 @@ public class adminsignup extends AppCompatActivity {
                 String code = et5.getText().toString();
 
                 if (fullname.equals("") ||email.equals("")||username.equals("")||password.equals("") || code.equals(""))
-                    Toast.makeText(adminsignup.this, "Please enter all fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AdminSignup.this, "Please enter all fields", Toast.LENGTH_SHORT).show();
                 else {
                     Boolean checkadminuser = DB.checkadminusername(username);
                     if (checkadminuser==false){
                         if (code.equals("56964")){
                             Boolean insert = DB.insertadmin(fullname,email,username,password);
                             if (insert==true){
-                                Toast.makeText(adminsignup.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), adminlogin.class);
+                                Toast.makeText(AdminSignup.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), AdminLogin.class);
                                 startActivity(intent);
                             }
                             else {
-                                Toast.makeText(adminsignup.this, "Registration Failed", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AdminSignup.this, "Registration Failed", Toast.LENGTH_SHORT).show();
                             }
                         }
                         else{
-                            Toast.makeText(adminsignup.this, "The Admin Code is Wrong", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AdminSignup.this, "The Admin Code is Wrong", Toast.LENGTH_SHORT).show();
                         }
                     }
                     else {
-                        Toast.makeText(adminsignup.this, "User Already exists please signin", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getApplicationContext(), adminlogin.class);
+                        Toast.makeText(AdminSignup.this, "User Already exists please signin", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), AdminLogin.class);
                         startActivity(intent);
                     }
                 }
@@ -69,7 +69,7 @@ public class adminsignup extends AppCompatActivity {
         btnsignin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), adminlogin.class);
+                Intent intent = new Intent(getApplicationContext(), AdminLogin.class);
                 startActivity(intent);
             }
         });

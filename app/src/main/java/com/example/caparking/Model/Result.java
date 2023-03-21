@@ -30,7 +30,7 @@ public class Result {
 
     private Photos[] photos;
 
-    private ParkingArea[] parkingAreas;
+    //private ParkingArea[] parkingAreas;
 
     private String vicinity;
 
@@ -262,11 +262,5 @@ public class Result {
         return "ClassPojo [icon = "+icon+", place_id = "+place_id+", reviews = "+reviews+", scope = "+scope+", website = "+website+", international_phone_number = "+international_phone_number+", adr_address = "+adr_address+", url = "+url+", reference = "+reference+", geometry = "+geometry+", opening_hours = "+opening_hours+", utc_offset = "+utc_offset+", id = "+id+", photos = "+photos+", vicinity = "+vicinity+", address_components = "+address_components+", name = "+name+", formatted_address = "+formatted_address+", formatted_phone_number = "+formatted_phone_number+", rating = "+rating+", types = "+types+"]";
     }
 
-    public ParkingArea[] getParkingAreas() {
-        return parkingAreas;
-    }
 
-    public void setParkingAreas(ParkingArea[] parkingAreas) {
-        this.parkingAreas = parkingAreas;
-    }
 }
