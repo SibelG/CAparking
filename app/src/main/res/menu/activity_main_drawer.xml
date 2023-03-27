@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_itinerary"
+            android:icon="@drawable/ic_view_list_black_24dp"
+            android:title="Itinerary" />
+
+        <item
+            android:id="@+id/nav_card"
+            android:icon="@drawable/ic_baseline_credit_card_24"
+            android:title="Cards" />
+        <item
+            android:id="@+id/nav_favorites"
+            android:icon="@drawable/ic_baseline_favorite_border_24"
+            android:title="Favorites" />
+
+    </group>
+
+    <item android:title="Account">
+
+        <menu>
+            <item
+                android:id="@+id/nav_profile"
+                android:icon="@drawable/ic_account_box_black_24dp"
+                android:title="Profile" />
+            <item
+                android:id="@+id/nav_security"
+                android:icon="@drawable/ic_baseline_security_24"
+                android:title="Security Settings" />
+
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_baseline_info_24"
+                android:title="About" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_baseline_assignment_return_24"
+                android:title="Logout" />
+
+        </menu>
+
+
+    </item>
+
+</menu>

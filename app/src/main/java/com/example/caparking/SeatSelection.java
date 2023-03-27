@@ -18,6 +18,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -29,6 +31,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.ColorRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.caparking.Helper.DBHelper;
@@ -43,18 +46,20 @@ import java.util.Calendar;
 
 public class SeatSelection extends AppCompatActivity implements View.OnClickListener {
 
-    Button btncardpay;
+
     SessionManager manager;
     DBHelper DB = new DBHelper(this);
     private SQLiteDatabase db;
-    Integer flagChecked = 0;
+    int flagChecked = 0;
     private boolean flightExists = false;
     private SharedPreferences sharedPreferences;
+    private String fare;
     private int parkingID;
     private int userID;
     private int tempYear;
     private int tempMonth;
     private int tempDay;
+    private int tempHour,tempMinute;
     private String oneWayDepartureDate, roundDepartureDate, roundReturnDate;
     private boolean isValidRoundDate = true;
     ImageButton c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,
@@ -62,18 +67,24 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
     c26,c27,c28,c29,c30,c31,c32;
     private ActivitySeatSelectionBinding binding;
     private DatePickerDialog datePickerDialog2;
-    private DatePickerDialog datePickerDialog3;
+    double totalFare;
 
+    TimePickerDialog timePickerDialog,timePickerDialog2;
+    Calendar calendar;
+    int currentHour;
+    int currentMinute;
+    String amPm,departureTime,returnTime,parkingDate;
     //current date
     private int year;
     private int month;
     private int day;
 
     //id of date picker controls
-    private final int ROUND_DEPARTURE_DATE_PICKER = R.id.btnRoundDepartureDatePicker;
-    private final int ROUND_RETURN_DATE_PICKER = R.id.btnRoundReturnDatePicker;
+    private final int ROUND_DATE_PICKER = R.id.btnRoundDepartureDatePicker;
+    private final int ROUND_DEPARTURE_TIME_PICKER = R.id.etChooseDepartureTime;
+    private final int ROUND_RETURN_TIME_PICKER = R.id.etChooseReturnTime;
 
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,21 +92,18 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_seat_selection);
         binding = ActivitySeatSelectionBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        setContentView(view);
+        setContentView(binding.getRoot());
 
-
-        btncardpay = (Button) findViewById(R.id.btncardpay);
-        TextView date = findViewById(R.id.textDate);
-        date.setText(currentDate());
+        binding.textDate.setText(currentDate());
         manager=new SessionManager(getApplicationContext());
         sharedPreferences = getApplicationContext().getSharedPreferences("PARKING_USER", Context.MODE_PRIVATE);
         userID = manager.getToken();
-        Toast.makeText(this, String.valueOf(userID), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, String.valueOf(userID), Toast.LENGTH_SHORT).show();
         parkingID = manager.getParkingId();
+        fare = getIntent().getStringExtra("price");
 
 
-        c1=findViewById(R.id.A1);
+        c1 = findViewById(R.id.A1);
         c2 = findViewById(R.id.A2);
         c3 = findViewById(R.id.A3);
         c4 = findViewById(R.id.A4);
@@ -127,22 +135,66 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
         c30 = findViewById(R.id.D6);
         c31 = findViewById(R.id.D7);
         c32 = findViewById(R.id.D8);
+        c1.setOnClickListener(this);
+        c1.setOnClickListener(this);
+        c2.setOnClickListener(this);
+        c3.setOnClickListener(this);
+        c4.setOnClickListener(this);
+        c5.setOnClickListener(this);
+        c6.setOnClickListener(this);
+        c7.setOnClickListener(this);
+        c8.setOnClickListener(this);
+        c9.setOnClickListener(this);
+        c10.setOnClickListener(this);
 
-        setDefaultColor(5);
-        btncardpay.setOnClickListener(new View.OnClickListener() {
+        binding.btncardpay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bookFlight();
-                Intent i = new Intent(SeatSelection.this, payment_activity.class);
-                startActivity(i);
+                if(isValidRoundInput()){
+                    bookFlight();
+                    Intent i = new Intent(SeatSelection.this, payment_activity.class);
+                    startActivity(i);
+
+
+                }
+
+            }
+        });
+
+        year = HelperUtilities.currentYear();
+        month = HelperUtilities.currentMonth();
+        day = HelperUtilities.currentDay();
+        calendar = Calendar.getInstance();
+        currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        currentMinute = calendar.get(Calendar.MINUTE);
+        //round trip departure date picker on click listener
+        binding.btnRoundDepartureDatePicker.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                datePickerDialog(ROUND_DATE_PICKER).show();
+            }
+        });
+
+        binding.etChooseDepartureTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimeDialog(ROUND_DEPARTURE_TIME_PICKER);
+            }
+        });
+
+        binding.etChooseReturnTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimeDialog(ROUND_RETURN_TIME_PICKER);
             }
         });
 
 
-        binding.totalFare.setText("$"+String.valueOf(HelperUtilities.calculateTotalFare(12.5,2)));
+        binding.perFare.setText(fare+" Hour");
+
     }
-
-
 
     private void checkIsBooked(Integer i) {
         if (flagChecked != 0) {
@@ -152,166 +204,166 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
         } else {
             flagChecked = i;
             setColorGreen(i);
-        }
+       }
     }
 
-    private void setDefaultColor(Integer i) {
+    private void setColorGRAY(Integer i) {
         switch (i) {
             case 1: {
-                c1.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c1.setBackgroundColor(Color.GRAY);
                 c1.setEnabled(true);
                 break;
             }
             case 2:  {
-                c2.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c2.setBackgroundColor(Color.GRAY);
                 c2.setEnabled(true);
                 break;
             }
             case 3: {
-                c3.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c3.setBackgroundColor(Color.GRAY);
                 c3.setEnabled(true);
                 break;
             }
             case 4:  {
-                c4.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c4.setBackgroundColor(Color.GRAY);
                 c4.setEnabled(true);
                 break;
             }
             case 5:  {
-                c5.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c5.setBackgroundColor(Color.GRAY);
                 c5.setEnabled(true);
                 break;
             }
             case 6:  {
-                c6.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c6.setBackgroundColor(Color.GRAY);
                 c6.setEnabled(true);
                 break;
             }
             case 7:  {
-                c7.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c7.setBackgroundColor(Color.GRAY);
                 c7.setEnabled(true);
                 break;
             }
             case 8: {
-                c8.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c8.setBackgroundColor(Color.GRAY);
                 c8.setEnabled(true);
                 break;
             }
             case 9: {
-                c9.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c9.setBackgroundColor(Color.GRAY);
                 c9.setEnabled(true);
                 break;
             }
             case 10:  {
-                c10.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c10.setBackgroundColor(Color.GRAY);
                 c10.setEnabled(true);
                 break;
             }
             case 11: {
-                c11.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c11.setBackgroundColor(Color.GRAY);
                 c11.setEnabled(true);
                 break;
             }
             case 12: {
-                c12.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c12.setBackgroundColor(Color.GRAY);
                 c12.setEnabled(true);
                 break;
             }
             case 13:  {
-                c13.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c13.setBackgroundColor(Color.GRAY);
                 c13.setEnabled(true);
                 break;
             }
             case 14:  {
-                c14.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c14.setBackgroundColor(Color.GRAY);
                 c14.setEnabled(true);
                 break;
             }
             case 15: {
-                c15.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c15.setBackgroundColor(Color.GRAY);
                 c15.setEnabled(true);
                 break;
             }
             case 16:  {
-                c16.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c16.setBackgroundColor(Color.GRAY);
                 c16.setEnabled(true);
                 break;
             }
             case 17: {
-                c17.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c17.setBackgroundColor(Color.GRAY);
                 c17.setEnabled(true);
                 break;
             }
             case 18:  {
-                c18.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c18.setBackgroundColor(Color.GRAY);
                 c18.setEnabled(true);
                 break;
             }
             case 19: {
-                c19.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c19.setBackgroundColor(Color.GRAY);
                 c19.setEnabled(true);
                 break;
             }
             case 20: {
-                c20.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c20.setBackgroundColor(Color.GRAY);
                 c20.setEnabled(true);
             }
             case 21: {
-                c21.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c21.setBackgroundColor(Color.GRAY);
                 c21.setEnabled(true);
             }
             case 22: {
-                c22.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c22.setBackgroundColor(Color.GRAY);
                 c22.setEnabled(true);
                 break;
             }
             case 23: {
-                c23.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c23.setBackgroundColor(Color.GRAY);
                 c23.setEnabled(true);
                 break;
             }
             case 24: {
-                c24.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c24.setBackgroundColor(Color.GRAY);
                 c24.setEnabled(true);
                 break;
             }
             case 25: {
-                c25.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c25.setBackgroundColor(Color.GRAY);
                 c25.setEnabled(true);
                 break;
             }
             case 26: {
-                c26.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c26.setBackgroundColor(Color.GRAY);
                 c26.setEnabled(true);
                 break;
             }
             case 27: {
-                c27.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c27.setBackgroundColor(Color.GRAY);
                 c27.setEnabled(true);
                 break;
             }
             case 28: {
-                c28.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c28.setBackgroundColor(Color.GRAY);
                 c28.setEnabled(true);
                 break;
             }
             case 29: {
-                c29.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c29.setBackgroundColor(Color.GRAY);
                 c29.setEnabled(true);
                 break;
             }
             case 30 : {
-                c30.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c30.setBackgroundColor(Color.GRAY);
                 c30.setEnabled(true);
                 break;
             }
             case 31:  {
-                c31.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c31.setBackgroundColor(Color.GRAY);
                 c31.setEnabled(true);
                 break;
             }
             case 32:  {
-                c32.setBackgroundColor(getResources().getColor(R.color.skyBlue));
+                c32.setBackgroundColor(Color.GRAY);
                 c32.setEnabled(true);
                 break;
             }
@@ -319,165 +371,180 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void setColorGRAY(Integer i) {
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+        if(departureTime.equalsIgnoreCase("departure") && returnTime.equalsIgnoreCase("return")){
+            var date1= binding.etChooseDepartureTime.getText().toString();
+            var date2= binding.etChooseReturnTime.getText().toString();
+            totalFare = HelperUtilities.calculateTotalFare(Double.parseDouble(fare),date1,date2);
+            binding.totalFare.setText("$"+totalFare);
+        }
+
+
+    }
+
+    private void setDefaultColor(Integer i) {
         switch (i) {
             case 1: {
-                c1.setBackgroundColor(Color.GRAY);
+                c1.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c1.setEnabled(false);
                 break;
             }
             case 2: {
-                c2.setBackgroundColor(Color.GRAY);
+                c2.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c2.setEnabled(false);
                 break;
             }
             case 3: {
-                c3.setBackgroundColor(Color.GRAY);
+                c3.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c3.setEnabled(false);
                 break;
             }
             case 4: {
-                c4.setBackgroundColor(Color.GRAY);
+                c4.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c4.setEnabled(false);
                 break;
             }
             case 5: {
-                c5.setBackgroundColor(Color.GRAY);
+                c5.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c5.setEnabled(false);
                 break;
             }
             case 6: {
-                c6.setBackgroundColor(Color.GRAY);
+                c6.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c6.setEnabled(false);
                 break;
             }
             case 7: {
-                c7.setBackgroundColor(Color.GRAY);
+                c7.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c7.setEnabled(false);
                 break;
             }
             case 8: {
-                c8.setBackgroundColor(Color.GRAY);
+                c8.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c8.setEnabled(false);
                 break;
             }
             case 9: {
-                c9.setBackgroundColor(Color.GRAY);
+                c9.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c9.setEnabled(false);
                 break;
             }
             case 10: {
-                c10.setBackgroundColor(Color.GRAY);
+                c10.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c10.setEnabled(false);
                 break;
             }
             case 11: {
-                c11.setBackgroundColor(Color.GRAY);
+                c11.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c11.setEnabled(false);
                 break;
             }
             case 12: {
-                c12.setBackgroundColor(Color.GRAY);
+                c12.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c12.setEnabled(false);
                 break;
             }
             case 13: {
-                c13.setBackgroundColor(Color.GRAY);
+                c13.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c13.setEnabled(false);
                 break;
             }
             case 14: {
-                c14.setBackgroundColor(Color.GRAY);
+                c14.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c14.setEnabled(false);
                 break;
             }
             case 15: {
-                c15.setBackgroundColor(Color.GRAY);
+                c15.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c15.setEnabled(false);
                 break;
             }
             case 16: {
-                c16.setBackgroundColor(Color.GRAY);
+                c16.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c16.setEnabled(false);
                 break;
             }
             case 17:  {
-                c17.setBackgroundColor(Color.GRAY);
+                c17.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c17.setEnabled(false);
                 break;
             }
             case 18:  {
-                c18.setBackgroundColor(Color.GRAY);
+                c18.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c18.setEnabled(false);
                 break;
             }
             case 19:  {
-                c19.setBackgroundColor(Color.GRAY);
+                c19.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c19.setEnabled(false);
                 break;
             }
             case 20: {
-                c20.setBackgroundColor(Color.GRAY);
+                c20.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c20.setEnabled(false);
                 break;
             }
             case 21:  {
-                c21.setBackgroundColor(Color.GRAY);
+                c21.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c21.setEnabled(false);
                 break;
             }
             case 22:  {
-                c22.setBackgroundColor(Color.GRAY);
+                c22.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c22.setEnabled(false);
                 break;
             }
             case 23:  {
-                c23.setBackgroundColor(Color.GRAY);
+                c23.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c23.setEnabled(false);
                 break;
             }
             case 24:  {
-                c24.setBackgroundColor(Color.GRAY);
+                c24.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c24.setEnabled(false);
                 break;
             }
             case 25:  {
-                c25.setBackgroundColor(Color.GRAY);
+                c25.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c25.setEnabled(false);
                 break;
             }
             case 26: {
-                c26.setBackgroundColor(Color.GRAY);
+                c26.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c26.setEnabled(false);
                 break;
             }
             case 27: {
-                c27.setBackgroundColor(Color.GRAY);
+                c27.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c27.setEnabled(false);
                 break;
             }
             case 28: {
-                c28.setBackgroundColor(Color.GRAY);
+                c28.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c28.setEnabled(false);
                 break;
             }
             case 29: {
-                c29.setBackgroundColor(Color.GRAY);
+                c29.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c29.setEnabled(false);
                 break;
             }
             case 30: {
-                c30.setBackgroundColor(Color.GRAY);
+                c30.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c30.setEnabled(false);
                 break;
             }
             case 31: {
-                c31.setBackgroundColor(Color.GRAY);
+                c31.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c31.setEnabled(false);
                 break;
             }
             case 32: {
-                c32.setBackgroundColor(Color.GRAY);
+                c32.setBackgroundColor(getResources().getColor(R.color.colorLightGray));
                 c32.setEnabled(false);
                 break;
             }
@@ -524,46 +591,107 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onStart() {
         super.onStart();
+        flagChecked = 0;
+        db = DB.getWritableDatabase();
+        Cursor cursor = DB.viewParkingAreas(String.valueOf(parkingID));
+        var date = binding.btnRoundDepartureDatePicker.getText().toString();
 
-        //var check = DB.checkSeats()
+        if (cursor != null && cursor.getCount() == 1) {
+            cursor.moveToFirst();
 
+            int  seatCount = cursor.getInt(1);
+            Log.d("seat", String.valueOf(seatCount));
+
+            for (int i=0;i< seatCount;i++){
+                boolean check = DB.checkSeats(parkingID,i,"26 Mart 2023 Pazar");
+                if(check){
+                    setColorGRAY(i);
+                    Log.d("seatNumber", String.valueOf(i));
+                }
+            }
+
+        }
+        else{
+            Log.d("error","errorrrrrrr");
+        }
 
     }
 
     public void bookFlight(){
         try{
-
-            db = DB.getWritableDatabase();
-
-            Boolean checkSeats = DB.selectSeats(db, parkingID, userID);
-
-            if(checkSeats) {
-
-                flightExists = true;
-                flightAlreadyBookedAlert().show();
-
-            }else{
-
-                flightExists = false;
-                String departureDate = binding.btnRoundDepartureDatePicker.getText().toString();
-                String returnDate= binding.btnRoundReturnDatePicker.getText().toString();
-                DB.insertSeat(db, departureDate, returnDate,currentDate(),flagChecked,1,parkingID,userID);
-                bookFlightDialog().show();
-
-            }
-
-
+            departureTime = binding.etChooseDepartureTime.getText().toString();
+            returnTime= binding.etChooseReturnTime.getText().toString();
+            parkingDate = binding.btnRoundDepartureDatePicker.getText().toString();
+            DB.insertSeat(db, departureTime, returnTime,parkingDate,flagChecked,1,totalFare,parkingID,userID);
+            bookFlightDialog().show();
 
         }catch(SQLiteException e){
 
         }
+    }
+    private TimePickerDialog showTimeDialog(int timePickerId)
+    {
+
+
+        switch (timePickerId) {
+            case ROUND_DEPARTURE_TIME_PICKER:
+
+                        timePickerDialog = new TimePickerDialog(SeatSelection.this, new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
+                                if (hourOfDay >= 12) {
+                                    amPm = "PM";
+                                } else {
+                                    amPm = "AM";
+                                }
+                                tempHour = hourOfDay;
+                                tempMinute = minutes;
+                                binding.etChooseDepartureTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
+                            }
+                        }, currentHour, currentMinute, false);
+
+                        timePickerDialog.show();
+                        break;
+
+            case ROUND_RETURN_TIME_PICKER:
+
+                        timePickerDialog2 = new TimePickerDialog(SeatSelection.this, new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
+                                if (hourOfDay >= 12) {
+                                    amPm = "PM";
+                                } else {
+                                    amPm = "AM";
+                                }
+                                String departureDate = tempHour + ":" + tempMinute;
+                                String returnDate = hourOfDay+ ":" + minutes;
+                                Toast.makeText(getApplicationContext(),departureDate,Toast.LENGTH_SHORT).show();
+
+                                if (HelperUtilities.compareTime(departureDate, returnDate)) {
+                                    timePickerAlert().show();
+                                    isValidRoundDate = false;
+                                } else {
+                                    isValidRoundDate = true;
+                                    binding.etChooseReturnTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
+                                }
+
+                            }
+                        }, currentHour, currentMinute, false);
+
+                        timePickerDialog2.show();
+                        break;
+
+        }
+
+    return null;
+
     }
 
     public DatePickerDialog datePickerDialog(int datePickerId) {
 
         switch (datePickerId) {
 
-            case ROUND_DEPARTURE_DATE_PICKER:
+            case ROUND_DATE_PICKER:
 
                 if (datePickerDialog2 == null) {
                     datePickerDialog2 = new DatePickerDialog(this, getRoundDepartureDatePickerListener(), year, month, day);
@@ -571,16 +699,30 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
                 datePickerDialog2.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 return datePickerDialog2;
 
-            case ROUND_RETURN_DATE_PICKER:
 
-                if (datePickerDialog3 == null) {
-                    datePickerDialog3 = new DatePickerDialog(this, getRoundReturnDatePickerListener(), year, month, day);
-                }
-                datePickerDialog3.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-                return datePickerDialog3;
         }
         return null;
     }
+
+    public boolean isValidRoundInput() {
+
+        if (binding.btnRoundDepartureDatePicker.getText().toString().equalsIgnoreCase("select date")) {
+            datePickerTwoAlert().show();
+            return false;
+        }
+        if (binding.etChooseDepartureTime.getText().toString().equalsIgnoreCase("departure")) {
+            timePickerOneAlert().show();
+            return false;
+        }
+
+        if (binding.etChooseReturnTime.getText().toString().equalsIgnoreCase("return")) {
+            datePickerTwoAlert().show();
+            return false;
+        }
+        return true;
+
+    }
+
     public Dialog bookFlightDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(SeatSelection.this);
@@ -627,30 +769,11 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
         };
     }
 
-    public DatePickerDialog.OnDateSetListener getRoundReturnDatePickerListener() {
-        return new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int startYear, int startMonth, int startDay) {
 
-                String departureDate = tempYear + "-" + (tempMonth + 1) + "-" + tempDay;
-                String returnDate = startYear + "-" + (startMonth + 1) + "-" + startDay;
 
-                if (HelperUtilities.compareDate(departureDate, returnDate)) {
-                    datePickerAlert().show();
-                    isValidRoundDate = false;
-                } else {
-                    isValidRoundDate = true;
-                    //get round trip return date here
-                    roundReturnDate = startYear + "-" + (startMonth + 1) + "-" + startDay;
-                    binding.btnRoundReturnDatePicker.setText(HelperUtilities.formatDate(startYear, startMonth, startDay));
-                }
-            }
-        };
-    }
-
-    public Dialog datePickerAlert() {
+    public Dialog timePickerAlert() {
         return new AlertDialog.Builder(this)
-                .setMessage("Please select a valid return date. The return date cannot be before the departure date.")
+                .setMessage("Please select a valid return time. The return time cannot be before the departure time.")
                 .setCancelable(false)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -658,7 +781,7 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
                 }).create();
     }
 
-    public Dialog datePickerOneAlert() {
+    public Dialog timePickerOneAlert() {
         return new AlertDialog.Builder(this)
                 .setMessage("Please select a departure date.")
                 .setCancelable(false)

@@ -27,13 +27,13 @@
 
 
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profileImage"
-                    android:layout_width="wrap_content"
+                    android:layout_width="150dp"
                     android:layout_height="150dp"
-                    android:layout_marginTop="25dp"
-                    android:gravity="center"
-                    android:src="@drawable/placeholder"/>
+                    android:src="@drawable/placeholder"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
 
                 <TextView
                     android:id="@+id/txtFullName"
@@ -51,7 +51,7 @@
                     android:layout_height="30dip"
                     android:layout_gravity="right"
                     android:background="@drawable/ic_add_a_photo_black_24dp"
-                    tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                    tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
 
             </LinearLayout>
@@ -88,19 +88,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:text="UserName: Doe" />
+                    android:text="Las name: Doe"/>
                 <TextView
                     android:id="@+id/txtClientEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:text="Email: john.doe@gmail.com"/>
+
                 <TextView
                     android:id="@+id/txtClientPhone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:text="Email: 4162354874"/>
+                    android:text="Phone:" />
+                <TextView
+                    android:id="@+id/txtClientCreditCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Credit Card: **** **** **** 2048"/>
 
 
                 <ImageButton
@@ -109,7 +116,7 @@
                     android:layout_height="30dip"
                     android:layout_gravity="right"
                     android:background="@drawable/ic_edit_black_24dp"
-                    tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+                    tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
 
 

@@ -78,7 +78,6 @@
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="16dp"
-                        android:fontFamily="@font/calibri"
                         android:text="Select your Parking Seat!"
                         android:textAlignment="center"
                         android:textColor="#FFFFFF"
@@ -100,7 +99,6 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/linearLayout"
                         android:layout_marginTop="8dp"
-                        android:fontFamily="@font/calibri"
                         android:text="12th - Feb - 2019 | Tuesday"
                         android:textAlignment="center"
                         android:textColor="#FFFFFF"
@@ -143,29 +141,42 @@
                                     android:drawableLeft="@drawable/ic_baseline_date_range_24"
                                     android:drawablePadding="15dp"
                                     android:fontFamily="sans-serif"
+                                    android:hint="Select Date"
                                     android:padding="15dp"
-                                    android:text="@string/prompt_departure_date"
+                                    android:text="Select Date"
                                     android:textAlignment="textStart"
                                     android:textAllCaps="false"
                                     android:textColor="@color/colorMediumGray"
                                     android:textSize="18sp" />
 
-                                <Button
-                                    android:id="@+id/btnRoundReturnDatePicker"
-                                    android:layout_width="match_parent"
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="start"
-                                    android:layout_marginBottom="10dp"
-                                    android:backgroundTint="#EAE9E9"
-                                    android:drawableLeft="@drawable/ic_baseline_date_range_24"
-                                    android:drawablePadding="15dp"
-                                    android:fontFamily="sans-serif"
-                                    android:padding="15dp"
-                                    android:text="@string/prompt_return_date"
-                                    android:textAlignment="textStart"
-                                    android:textAllCaps="false"
-                                    android:textColor="@color/colorMediumGray"
-                                    android:textSize="18sp" />
+                                    android:orientation="horizontal">
+
+                                    <EditText
+                                        android:id="@+id/etChooseDepartureTime"
+                                        android:layout_width="100dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_centerVertical="true"
+                                        android:textColor="@color/places_autocomplete_search_hint"
+                                        android:hint="Departure"
+                                        android:text="Departure" />
+
+                                    <EditText
+                                        android:id="@+id/etChooseReturnTime"
+                                        android:layout_width="100dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginLeft="20dp"
+                                        android:hint="Return"
+                                        android:text="Return"
+                                        android:textColor="@color/searchBarHintColor" />
+
+                                </LinearLayout>
+
 
                                 <TextView
                                     android:layout_width="match_parent"
@@ -195,14 +206,15 @@
                                     android:textStyle="bold" />
 
                                 <TextView
+                                    android:id="@+id/perFare"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="4dp"
                                     android:layout_marginBottom="4dp"
-                                    android:fontFamily="@font/calibri"
                                     android:text="3.30 Hour"
                                     android:textAlignment="textEnd"
-                                    android:textColor="#b3b3b3" />
+                                    android:textColor="#000000"
+                                    android:textSize="16sp" />
                             </LinearLayout>
                         </LinearLayout>
 
@@ -294,7 +306,6 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:fontFamily="@font/calibri"
                                     android:text="Your Seat"
                                     android:textAlignment="center"
                                     android:textColor="#b2b2b2" />
@@ -412,7 +423,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                                 <ImageButton
@@ -420,7 +431,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                             </LinearLayout>
@@ -436,7 +447,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                                 <ImageButton
@@ -444,7 +455,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                             </LinearLayout>
@@ -480,7 +491,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                                 <ImageButton
@@ -488,7 +499,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                             </LinearLayout>
@@ -504,7 +515,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                                 <ImageButton
@@ -512,7 +523,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                             </LinearLayout>
@@ -547,7 +558,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                                 <ImageButton
@@ -555,7 +566,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                             </LinearLayout>
@@ -571,7 +582,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                                 <ImageButton
@@ -579,7 +590,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                             </LinearLayout>
@@ -614,7 +625,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                                 <ImageButton
@@ -622,7 +633,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                             </LinearLayout>
@@ -638,7 +649,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                                 <ImageButton
@@ -646,7 +657,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                             </LinearLayout>
@@ -681,7 +692,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                                 <ImageButton
@@ -689,7 +700,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                             </LinearLayout>
@@ -705,7 +716,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                                 <ImageButton
@@ -713,7 +724,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                             </LinearLayout>
@@ -748,7 +759,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                                 <ImageButton
@@ -756,7 +767,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                             </LinearLayout>
@@ -772,7 +783,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                                 <ImageButton
@@ -780,7 +791,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                             </LinearLayout>
@@ -815,7 +826,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                                 <ImageButton
@@ -823,7 +834,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                             </LinearLayout>
@@ -839,7 +850,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                                 <ImageButton
@@ -847,7 +858,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                             </LinearLayout>
@@ -882,7 +893,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                                 <ImageButton
@@ -890,7 +901,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
 
                             </LinearLayout>
@@ -906,7 +917,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginEnd="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                                 <ImageButton
@@ -914,7 +925,7 @@
                                     android:layout_width="36dp"
                                     android:layout_height="36dp"
                                     android:layout_marginStart="4dp"
-                                    android:background="@drawable/custom_selector"
+                                    android:background="@color/backgroundLightGray"
                                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
                             </LinearLayout>

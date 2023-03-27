@@ -11,7 +11,7 @@
     tools:context=".deletebus">
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/per_price"
         android:layout_width="277dp"
         android:layout_height="64dp"
         android:gravity="center_horizontal"

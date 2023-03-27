@@ -29,7 +29,7 @@ public class AdminPanel extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), UpdateParkingArea.class);
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(intent);
             }
         });
@@ -50,7 +50,7 @@ public class AdminPanel extends AppCompatActivity {
             }
         });*/
 
-        view.setOnClickListener(new View.OnClickListener() {
+        /*view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Cursor result = DB.viewParkingAreas();
@@ -72,7 +72,7 @@ public class AdminPanel extends AppCompatActivity {
                 builder.setMessage(buffer.toString());
                 builder.show();
             }
-        });
+        });*/
         end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

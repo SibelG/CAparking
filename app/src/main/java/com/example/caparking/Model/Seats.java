@@ -2,42 +2,34 @@ package com.example.caparking.Model;
 
 public class Seats {
 
-
-    private ParkingAreas parkingAreas;
+    private int id;
+    private String parkingName;
     private int parking_id;
-    private User user;
-    private int user_id;
     private String departure;
     private String arrival;
     private String date;
     private int seatNumber;
     private int seatStatus;
+    private double totalAmount;
 
 
     public Seats() {
 
     }
 
-    public Seats(String departure, ParkingAreas parkingAreas,User user,int userId, String arrival, int parking_id, String date, int seatNumber,int seatStatus) {
+    public Seats(int id,String departure, String parkingName, String arrival, String date, int seatNumber,int seatStatus,double totalAmount) {
 
+        this.id=id;
         this.departure=departure;
-        this.parkingAreas=parkingAreas;
-        this.user=user;
+        this.parkingName=parkingName;
         this.arrival=arrival;
-        this.parking_id=parking_id;
         this.date=date;
         this.seatNumber=seatNumber;
         this.seatStatus=seatStatus;
-        this.user_id=userId;
+        this.totalAmount= totalAmount;
+
     }
 
-    public ParkingAreas getParkingAreas() {
-        return parkingAreas;
-    }
-
-    public void setParkingAreas(ParkingAreas parkingAreas) {
-        this.parkingAreas = parkingAreas;
-    }
 
     public int getParking_id() {
         return parking_id;
@@ -45,22 +37,6 @@ public class Seats {
 
     public void setParking_id(int parking_id) {
         this.parking_id = parking_id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public int getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
     }
 
     public String getDeparture() {
@@ -101,5 +77,29 @@ public class Seats {
 
     public void setSeatStatus(int seatStatus) {
         this.seatStatus = seatStatus;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getParkingName() {
+        return parkingName;
+    }
+
+    public void setParkingName(String parkingName) {
+        this.parkingName = parkingName;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
     }
 }

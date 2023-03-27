@@ -1,11 +1,15 @@
 package com.example.caparking;
 
 
+import static com.example.caparking.util.LogUtil.logD;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -30,8 +34,10 @@ import com.example.caparking.Common.Common;
 import com.example.caparking.Helper.DBHelper;
 import com.example.caparking.Helper.HelperUtilities;
 import com.example.caparking.Model.MyPlaces;
+import com.example.caparking.Model.PlaceDetail;
 import com.example.caparking.Model.Results;
 import com.example.caparking.Remote.IGoogleAPIService;
+import com.example.caparking.databinding.ActivityUpdateParkingBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -45,6 +51,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.io.IOException;
@@ -66,6 +73,8 @@ public class UpdateParkingArea extends FragmentActivity implements OnMapReadyCal
     IGoogleAPIService mService;
     DBHelper DB = new DBHelper(this);
     MyPlaces currentPlaces;
+    SQLiteDatabase db;
+    private ActivityUpdateParkingBinding binding;
 
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationCallback locationCallback;
@@ -77,7 +86,10 @@ public class UpdateParkingArea extends FragmentActivity implements OnMapReadyCal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_update_parking);
+
+        binding = ActivityUpdateParkingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -88,8 +100,8 @@ public class UpdateParkingArea extends FragmentActivity implements OnMapReadyCal
             Common.checkLocationPermission(this);
         }
 
-        mBottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
-        sheetBehavior = BottomSheetBehavior.from(mBottomSheetLayout);
+        //mBottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
+        sheetBehavior = BottomSheetBehavior.from(binding.sheetLayout.bottomSheetLayout);
 
         header_Arrow_Image = findViewById(R.id.bottom_sheet_arrow);
 
@@ -101,7 +113,26 @@ public class UpdateParkingArea extends FragmentActivity implements OnMapReadyCal
         fusedLocationProviderClient.requestLocationUpdates(mLocationRequest,locationCallback, Looper.myLooper());
 
         searchLocation();
-        nearByPlaces("parking");
+
+        binding.findButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nearByPlaces("parking");
+            }
+        });
+        binding.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
+                    sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                } else {
+                    sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }
+
+            }
+        });
+
+
 
     }
 
@@ -308,31 +339,39 @@ public class UpdateParkingArea extends FragmentActivity implements OnMapReadyCal
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+                if (marker.getSnippet() != null) {
+                    //Common.currentResults = currentPlaces.getResults()[Integer.parseInt(marker.getSnippet())];
+                    startActivity(new Intent(UpdateParkingArea.this, UpdatePlaceActivity.class));
 
-                    header_Arrow_Image.setOnClickListener(new View.OnClickListener() {
+
+                }
+                return true;
+                /*header_Arrow_Image.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onClick(View v) {*/
 
-                            if(sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
+                            /*if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
                                 sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                             } else {
                                 sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                            }
+                            }*/
 
-                        }
-                    });
-                   sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                       /* }
+                    });*/
+                    /*sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
                         @Override
                         public void onStateChanged(@NonNull View bottomSheet, int newState) {
                         }
+
+
                         @Override
                         public void onSlide(@NonNull View bottomSheet, float slideOffset) {
 
                             header_Arrow_Image.setRotation(slideOffset * 180);
                         }
-                    });
+                    });*/
 
-                return true;
+
             }
         });
     }
@@ -340,45 +379,7 @@ public class UpdateParkingArea extends FragmentActivity implements OnMapReadyCal
 
 
 
- private void updateLocation(View view) {
 
-    TextView locName = findViewById(R.id.locationName);
-    EditText totalSeats = findViewById(R.id.totalSeats);
-    EditText perHour = findViewById(R.id.perHour);
-    Button updateLoc = findViewById(R.id.updateLoc);
 
-    updateLoc.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            String name = locName.getText().toString();
-            String total_seats = totalSeats.getText().toString();
-            String per_hour = perHour.getText().toString();
-
-            if (total_seats.equals("") || per_hour.equals(""))
-            {
-                Toast.makeText(UpdateParkingArea.this, "Please enter all fields", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                Boolean checkid= DB.checkLocations(name);
-                if (checkid==true){
-                    Boolean update = DB.updateAreas(per_hour, Double.valueOf(total_seats),name);
-                    if (update==true){
-                        Toast.makeText(UpdateParkingArea.this, "Bus updated successfully", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getApplicationContext(), AdminPanel.class);
-                        startActivity(intent);
-                    }
-                    else {
-                        Toast.makeText(UpdateParkingArea.this, "New entry not updated", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else {
-                    Toast.makeText(UpdateParkingArea.this, "ID doesnot exists", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    });
-
-  }
 
 }

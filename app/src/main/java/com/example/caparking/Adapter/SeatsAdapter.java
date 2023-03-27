@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SeatsAdapter extends RecyclerView.Adapter<SeatsAdapter.MyViewHolder>{
+
     private List<Seats> purchase_list;
     private Context context;
     public SeatsAdapter(Context context, List<Seats> purchase_list) {
@@ -48,9 +49,9 @@ public class SeatsAdapter extends RecyclerView.Adapter<SeatsAdapter.MyViewHolder
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final Seats detail = purchase_list.get(position);
-        holder.purchase_location_name.setText(detail.getParkingAreas().getParkingName());
-        holder.purchase_location_date.setText(detail.getDeparture());
-        holder.purchase_location_amount.setText(NumberFormat.getCurrencyInstance().format(detail.getParkingAreas().getPerHourPrice()));
+        holder.purchase_location_name.setText(detail.getParkingName());
+        holder.purchase_location_date.setText(detail.getDate());
+        //holder.purchase_location_amount.setText(NumberFormat.getCurrencyInstance().format(detail.getParkingAreas().getPerHourPrice()));
         if(detail.getSeatStatus()==1){
             holder.purchase_location_paid.setText("In Progress");
         }
@@ -59,7 +60,7 @@ public class SeatsAdapter extends RecyclerView.Adapter<SeatsAdapter.MyViewHolder
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
 
-            ParkingAreas location = detail.getParkingAreas();
+            //ParkingAreas location = detail.getParkingAreas();
             @Override
             public void onClick(View v) {
                 //Open PurchaseDetailFragment

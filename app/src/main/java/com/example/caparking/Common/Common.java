@@ -74,7 +74,23 @@ public class Common {
 
         return googlePlacesUrl.toString();
     }
+    public static String getPlaceDetailUrl(String place_id) {
+        StringBuilder url = new StringBuilder("https://maps.googleapis.com/maps/api/place/details/json");
+        url.append("?placeid="+place_id);
+        url.append("&key=AIzaSyAgjvl_cLGKpKOJ85WC3BpzVT_dv_tLOwI");
 
+        return url.toString();
+    }
+
+    public static String getPhotoOfPlaces(String photo_reference, int maxWidth) {
+
+        StringBuilder url = new StringBuilder("https://maps.googleapis.com/maps/api/place/photo");
+        url.append("?maxwidth="+maxWidth);
+        url.append("&photoreference="+photo_reference);
+        url.append("&key=AIzaSyAgjvl_cLGKpKOJ85WC3BpzVT_dv_tLOwI");
+
+        return url.toString();
+    }
 
 
     public static boolean checkLocationPermission(Context context) {

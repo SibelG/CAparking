@@ -2,6 +2,7 @@ package com.example.caparking.Helper;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -243,26 +244,50 @@ public class HelperUtilities {
         return (outboundFare + returnFare) * numTraveller;
     }
 
-    public static Double calculateTotalFare(double fare, int numTraveller){
-        return fare * numTraveller;
-    }
+    public static Double calculateTotalFare(double fare, String departureTime, String returnTime){
+        try {
 
-    public static boolean compareDate(String departureDate, String returnDate){
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+            Date date1 = format.parse(departureTime);
+            Date date2 = format.parse(returnTime);
 
-        try{
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date date1 = sdf.parse(departureDate);
-            Date date2 = sdf.parse(returnDate);
+            if(date2.after(date1)){
+                long difference = date2.getTime() - date1.getTime();
+                long diffHours = difference / (60 * 60 * 1000) % 24;
+
+                if(diffHours<2){
+                    return fare;
+                }else if (diffHours>2 && diffHours<3 ){
+                    return fare+1;
+                }
+                else{
+                    return diffHours * fare;
+                }
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+}
+
+    public static boolean compareTime(String departureTime, String returnTime) {
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            Date date1 = sdf.parse(departureTime);
+            Date date2 = sdf.parse(returnTime);
 
             if (date2.before(date1)) {
                 return true;
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return false;
-    }
 
+    }
 }

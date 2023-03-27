@@ -38,12 +38,12 @@ public class Login extends AppCompatActivity {
         manager=new SessionManager(getApplicationContext());
 
         //checks the login status and redirects to the main activity
-        /*if (manager.isLoggedIn()) {
+        if (manager.isLoggedIn()) {
             Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
             startActivity(intent);
             finish();
             return;
-        }*/
+        }
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

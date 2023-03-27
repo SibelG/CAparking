@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,41 +27,37 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.caparking.Helper.DBHelper;
 import com.example.caparking.Helper.HelperUtilities;
+import com.example.caparking.Model.User;
+import com.example.caparking.databinding.ActivityProfileBinding;
+import com.example.caparking.databinding.ActivitySeatSelectionBinding;
+import com.example.caparking.util.SessionManager;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 1;
     private Intent intent;
-    private int clientID;
+    private int userId;
     private String TAG;
-    private ImageButton uploadImage;
-    private ImageView profileImage;
-    private SQLiteOpenHelper databaseHelper;
+    private DBHelper DB;
     private SQLiteDatabase db;
     private Cursor cursor;
-    private TextView clientFirstname;
-    private TextView clientLastName;
-    private TextView clientEmail;
-    private TextView clientPhone;
-    private TextView fullName;
-    private TextView clientCreditCard;
-    private ImageButton editProfile;
+    SessionManager manager;
+    private ActivityProfileBinding binding;
 
-    /*@Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        binding = ActivityProfileBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        profileImage = (ImageView) findViewById(R.id.profileImage);
-        uploadImage = (ImageButton) findViewById(R.id.btnEditProfilePicture);
-        editProfile = (ImageButton) findViewById(R.id.btnEditProfile);
+        manager = new SessionManager(this);
+        userId = manager.getToken();
 
-        clientID = clientID();
+        DB = new DBHelper(this);
+        getProfileInformation(userId);
+        loadImage(userId);
 
-        getProfileInformation(clientID);
-        loadImage(clientID);
-
-        uploadImage.setOnClickListener(new View.OnClickListener() {
+        binding.btnEditProfilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent uploadImageIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -70,7 +65,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        editProfile.setOnClickListener(new View.OnClickListener() {
+        binding.btnEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 intent = new Intent(getApplicationContext(), EditProfileActivity.class);
@@ -83,38 +78,29 @@ public class ProfileActivity extends AppCompatActivity {
     public void getProfileInformation(int employeeID) {
         try {
 
-            clientFirstname = (TextView) findViewById(R.id.txtClientFirstName);
-            clientLastName = (TextView) findViewById(R.id.txtClientLastName);
-            clientEmail = (TextView) findViewById(R.id.txtClientEmail);
-            clientPhone = (TextView) findViewById(R.id.txtClientPhone);
-            clientCreditCard = (TextView) findViewById(R.id.txtClientCreditCard);
-            fullName = (TextView) findViewById(R.id.txtFullName);
 
 
-            databaseHelper = new DBHelper(getApplicationContext());
-            db = databaseHelper.getReadableDatabase();
+            db = DB.getReadableDatabase();
 
-            cursor = DatabaseHelper.selectClientJoinAccount(db, clientID);
+            cursor = DB.selectAccount(userId);
 
 
             if (cursor != null && cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                String fName = cursor.getString(0);
-                String lName = cursor.getString(1);
-                String phone = cursor.getString(2);
-                String creditCard = cursor.getString(3);
-                String email = cursor.getString(4);
+                String fName = cursor.getString(1);
+                String email = cursor.getString(3);
+                String flName = cursor.getString(4);
+                /*String phone = cursor.getString(5);
+                String creditCard = cursor.getString(6);*/
 
-                Client client = new Client(fName, lName, phone, creditCard);
-                Account account = new Account(email);
+                User client = new User(fName, email,flName, "", "");
 
-                clientFirstname.setText("First Name: " + client.getFirstName());
-                clientLastName.setText("Last Name: " + client.getLastName());
-                clientPhone.setText("Phone: " + client.getPhone());
-                clientCreditCard.setText("Credit Card: " + HelperUtilities.maskCardNumber(client.getCreditCard()));
-                clientEmail.setText("Email: " + account.getEmail());
+                binding.txtClientFirstName.setText("First Name: " + client.getName());
+                binding.txtFullName.setText("FullName: " + client.getFullname());
+                /*binding.txtClientPhone.setText("Phone: " + client.getPhone());
+                binding.txtClientCreditCard.setText("Credit Card: " + HelperUtilities.maskCardNumber(client.getCreditCard()));*/
+                binding.txtClientEmail.setText("Email: " + client.getEmail());
 
-                fullName.setText(client.getFirstName() + " " + client.getLastName());
             }
 
         } catch (SQLiteException ex) {
@@ -122,11 +108,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    public int clientID() {
-        LoginActivity.sharedPreferences = getSharedPreferences(LoginActivity.MY_PREFERENCES, Context.MODE_PRIVATE);
-        clientID = LoginActivity.sharedPreferences.getInt(LoginActivity.CLIENT_ID, 0);
-        return clientID;
-    }
 
 
     //uploads image from sd card
@@ -150,25 +131,24 @@ public class ProfileActivity extends AppCompatActivity {
                         // Create a byte array from ByteArrayOutputStream
                         byte[] byteArray = stream.toByteArray();
 
-
                         try {
-                            databaseHelper = new DBHelper(getApplicationContext());
-                            db = databaseHelper.getWritableDatabase();
 
-                            DBHelper.updateClientImage(db,
+                            db = DB.getWritableDatabase();
+
+                            DB.updateClientImage(db,
                                     byteArray,
-                                    String.valueOf(clientID));
+                                    String.valueOf(userId));
 
-                            db = databaseHelper.getReadableDatabase();
+                            db = DB.getReadableDatabase();
 
-                            cursor = DatabaseHelper.selectImage(db, clientID);
+                            cursor = DB.selectImage(db, userId);
 
                             if (cursor.moveToFirst()) {
                                 // Create a bitmap from the byte array
                                 byte[] image = cursor.getBlob(0);
 
-                                profileImage.setImageBitmap(HelperUtilities.decodeSampledBitmapFromByteArray(image, 300, 300));
-
+                                //binding.profileImage.setImageBitmap(HelperUtilities.decodeSampledBitmapFromByteArray(image, 300, 300));
+                                binding.profileImage.setImageURI(selectedImage);
                             }
 
 
@@ -189,13 +169,12 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     //loads image on create
-    public void loadImage(int clientID) {
+    public void loadImage(int userId) {
         try {
-            databaseHelper = new DBHelper(getApplicationContext());
-            db = databaseHelper.getReadableDatabase();
 
+            db = DB.getReadableDatabase();
 
-            cursor = DBHelper.selectImage(db, clientID);
+            cursor = DB.selectImage(db, userId);
 
             if (cursor != null && cursor.getCount() > 0) {
                 cursor.moveToFirst();
@@ -204,7 +183,7 @@ public class ProfileActivity extends AppCompatActivity {
                 if (cursor.getBlob(0) != null) {
                     byte[] image = cursor.getBlob(0);
 
-                    profileImage.setImageBitmap(HelperUtilities.decodeSampledBitmapFromByteArray(image, 300, 300));
+                    binding.profileImage.setImageBitmap(HelperUtilities.decodeSampledBitmapFromByteArray(image, 300, 300));
 
                 }
 
@@ -226,5 +205,5 @@ public class ProfileActivity extends AppCompatActivity {
         } catch (Exception ex) {
             Toast.makeText(getApplicationContext(), "Error closing database or cursor", Toast.LENGTH_SHORT).show();
         }
-    }*/
+    }
 }

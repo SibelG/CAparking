@@ -27,10 +27,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase MyDB) {
-        MyDB.execSQL("create Table users(id INTEGER primary key AUTOINCREMENT, username TEXT, password TEXT, email TEXT, fullname TEXT)");
+        MyDB.execSQL("create Table users(id INTEGER primary key AUTOINCREMENT, username TEXT, password TEXT," +
+                " email TEXT, fullname TEXT,Phone TEXT, CredidCard TEXT ,Image BLOB)");
         MyDB.execSQL("create Table parkingAreas(id INTEGER primary key AUTOINCREMENT, total_seats INTEGER, perHourPrice REAL, parkingName TEXT)");
         MyDB.execSQL("create Table admin(id INTEGER primary key AUTOINCREMENT, username TEXT, password TEXT, email TEXT, fullname TEXT)");
-        MyDB.execSQL("create Table seats(id INTEGER primary key AUTOINCREMENT,  departure TEXT, arrival TEXT, date TEXT, seatNumber INTEGER, seatStatus INTEGER, seatParking INTEGER, userId INTEGER, FOREIGN KEY(seatParking) REFERENCES parkingAreas(id), FOREIGN KEY(userId) REFERENCES users(id))");
+        MyDB.execSQL("create Table seats(id INTEGER primary key AUTOINCREMENT,  departure TEXT, arrival TEXT, date TEXT, seatNumber INTEGER, seatStatus INTEGER, totalAmount REAL ,seatParking INTEGER, userId INTEGER, FOREIGN KEY(seatParking) REFERENCES parkingAreas(id), FOREIGN KEY(userId) REFERENCES users(id))");
 
     }
 
@@ -119,14 +120,14 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
     }
 
-    public Boolean updateAreas(String total_seats, Double perHourPrice, String locationName) {
+    public Boolean updateAreas(int id,int total_seats, Double perHourPrice) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("total_seats", total_seats);
         contentValues.put("perHourPrice", perHourPrice);
-        Cursor cursor = MyDB.rawQuery("Select * from parkingAreas where locationName = ?", new String[]{locationName});
+        Cursor cursor = MyDB.rawQuery("Select * from parkingAreas where id = ?", new String[]{String.valueOf(id)});
         if (cursor.getCount() > 0) {
-            long result = MyDB.update("parkingAreas", contentValues, "locationName=?", new String[]{locationName});
+            long result = MyDB.update("parkingAreas", contentValues, "id=?", new String[]{String.valueOf(id)});
             if (result == -1) return false;
             else
                 return true;
@@ -149,7 +150,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }
     public List<Seats> getDataFromDB(int user_id){
         List<Seats> modelList = new ArrayList<Seats>();
-        String query = "select * from seats where userId="+user_id;
+        String query = "select seats.id,departure,arrival,date,seatNumber,seatStatus, totalAmount, parkingName  from seats  " +
+                "INNER JOIN parkingAreas ON seats.seatParking=parkingAreas.id " +
+                "INNER JOIN users ON seats.userId=users.id where seats.userId="+user_id;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query,null);
@@ -157,20 +160,22 @@ public class DBHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()){
             do {
                 Seats model = new Seats();
-                model.setDeparture(cursor.getString(0));
-                model.setArrival(cursor.getString(1));
-                model.setDate(cursor.getString(2));
-                model.setSeatNumber(cursor.getInt(3));
-                model.setParking_id(cursor.getInt(4));
-                model.setUser_id(cursor.getInt(5));
+                model.setId(cursor.getInt(0));
+                model.setDeparture(cursor.getString(1));
+                model.setArrival(cursor.getString(2));
+                model.setDate(cursor.getString(3));
+                model.setSeatNumber(cursor.getInt(4));
+                model.setSeatStatus(cursor.getInt(5));
+                model.setTotalAmount(cursor.getDouble(6));
+                model.setParkingName(cursor.getString(7));
+
 
                 modelList.add(model);
             }while (cursor.moveToNext());
         }
 
 
-        Log.d("student data", modelList.toString());
-
+        Log.d("data", modelList.toString());
 
         return modelList;
     }
@@ -194,13 +199,14 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.close();
         return id;
     }
-    public void insertSeat(SQLiteDatabase db, String departure, String arrival, String date, int seatNumber, int status, int parkingId, int userId) {
+    public void insertSeat(SQLiteDatabase db, String departure, String arrival, String date, int seatNumber, int status, double totalAmount, int parkingId, int userId) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("departure", departure);
         contentValues.put("arrival", arrival);
         contentValues.put("date", date);
         contentValues.put("seatNumber",seatNumber);
         contentValues.put("seatStatus", status);
+        contentValues.put("totalAmount",totalAmount);
         contentValues.put("seatParking", parkingId);
         contentValues.put("userId",userId);
         db.insert("seats", null, contentValues);
@@ -219,24 +225,20 @@ public class DBHelper extends SQLiteOpenHelper {
             return false;
         }
     }
-    public Boolean checkSeats(String id, int parkingLocation) {
+    public Boolean checkSeats(int seatParking,int seatNumber,String date) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
 
-        Cursor cursor = MyDB.rawQuery("Select * from seats where id = ? and seatStatus = ? and parkingLocation = ? ", new String[]{id, "1", String.valueOf(parkingLocation)});
+        Cursor cursor = MyDB.rawQuery("Select * from seats where  seatNumber=? and seatStatus = ? and seatParking = ? and date = ?", new String[]{String.valueOf(seatNumber), String.valueOf(1), String.valueOf(seatParking),date});
         if (cursor.getCount() > 0) {
-            long result = MyDB.update("seats", contentValues, "id=?", new String[]{id});
-            if (result == -1) return false;
-            else
-                return true;
+            return true;
         } else {
             return false;
         }
     }
 
-    public boolean selectSeats(SQLiteDatabase db, int parkingID, int userID) {
+    public boolean selectSeats(SQLiteDatabase db, int parkingID, String date) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
-        Cursor cursor = MyDB.rawQuery("Select * from seats where seatParking = ? and userId = ?", new String[]{String.valueOf(parkingID), String.valueOf(userID)});
+        Cursor cursor = MyDB.rawQuery("Select * from seats where seatParking = ? and date = ? and seatStatus = ?", new String[]{String.valueOf(parkingID), date, String.valueOf(1)});
         if (cursor.getCount() > 0)
             return true;
         else
@@ -256,9 +258,9 @@ public class DBHelper extends SQLiteOpenHelper {
             return false;
         }
     }*/
-    public Cursor viewParkingAreas() {
+    public Cursor viewParkingAreas(String id) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
-        Cursor cursor = MyDB.rawQuery("Select * from parkingAreas", null);
+        Cursor cursor = MyDB.rawQuery("Select * from parkingAreas where id= ?", new String[]{id});
         return cursor;
     }
 
@@ -276,12 +278,16 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase MyDB = this.getWritableDatabase();
         Cursor data = MyDB.rawQuery("Select * from buses", null);
         return data;*/
-    public Cursor selectAccount(String email) {
+    public Cursor selectAccount(int id) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
-        return MyDB.query("users", null, " email = ? ",
-                new String[]{email}, null, null, null, null);
+        return MyDB.query("users", null, " id = ? ",
+                new String[]{String.valueOf(id)}, null, null, null, null);
     }
-
+    public  void updateClientImage(SQLiteDatabase db, byte[] image, String id) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("Image", image);
+        db.update("users", contentValues, " id = ? ", new String[]{id});
+    }
     public boolean checkLocations(String locationname) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
         Cursor cursor = MyDB.rawQuery("Select * from parkingAreas where parkingName = ?", new String[]{locationname});
@@ -290,7 +296,11 @@ public class DBHelper extends SQLiteOpenHelper {
         else
             return false;
     }
-
+    public Cursor selectImage(SQLiteDatabase db, int userID) {
+        return db.query("users", new String[]{"Image"}, "id = ? ",
+                new String[]{Integer.toString(userID)}, null, null,
+                null, null);
+    }
     public boolean checkid(String id) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
         Cursor cursor = MyDB.rawQuery("Select * from parkingAreas where id = ?", new String[]{id});

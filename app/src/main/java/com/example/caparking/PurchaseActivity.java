@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 
 import com.example.caparking.Adapter.SeatsAdapter;
+import com.example.caparking.Helper.DBHelper;
 import com.example.caparking.Model.Seats;
 import com.example.caparking.util.SessionManager;
 
@@ -24,6 +25,7 @@ public class PurchaseActivity extends AppCompatActivity {
     private RecyclerView purchase_list_view;
     private SeatsAdapter seatsAdapter;
     private List<Seats> purchase_list;
+    DBHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,9 @@ public class PurchaseActivity extends AppCompatActivity {
     }
 
     private void getPurchases() {
+        db = new DBHelper(this);
+        int id = manager.getToken();
         purchase_list = new ArrayList<>();
+        purchase_list = db.getDataFromDB(id);
     }
 }

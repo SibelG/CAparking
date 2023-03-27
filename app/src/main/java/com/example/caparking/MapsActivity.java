@@ -12,14 +12,20 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -32,6 +38,7 @@ import com.example.caparking.Helper.HelperUtilities;
 import com.example.caparking.Model.MyPlaces;
 import com.example.caparking.Model.Results;
 import com.example.caparking.Remote.IGoogleAPIService;
+import com.example.caparking.util.SessionManager;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -49,15 +56,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.google.android.material.navigation.NavigationView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
+        NavigationView.OnNavigationItemSelectedListener{
 
     private static final int MY_PERMISSION_CODE = 1000;
     private GoogleMap mMap;
@@ -69,7 +74,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     IGoogleAPIService mService;
     DBHelper DB = new DBHelper(this);
     MyPlaces currentPlaces;
-
+    private View header;
+    SessionManager sessionManager;
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationCallback locationCallback;
 
@@ -78,6 +84,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+
+        //navigation drawer manager
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        header = navigationView.getHeaderView(0);
+
+
+        sessionManager = new SessionManager(this);
 
 
 
@@ -91,15 +117,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Common.checkLocationPermission(this);
         }
 
-        //nearByPlaces("parking");
-
-       /* findButton.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                nearByPlaces("parking");
-            }
-        });*/
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
 
@@ -279,8 +296,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (marker.getSnippet() != null) {
 
                     Common.currentResults = currentPlaces.getResults()[Integer.parseInt(marker.getSnippet())];
-
                     startActivity(new Intent(MapsActivity.this, ViewPlaceActivity.class));
+                    //startActivity(new Intent(MapsActivity.this, UpdatePlaceActivity.class));
+                    /*if(getCallingActivity().getClassName()!=null){
+                        if(getCallingActivity().getClassName().equals(AdminPanel.class.getName())){
+
+                        }
+
+                    }*/
+
                 }
                 return true;
             }
@@ -299,5 +323,73 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(this, "Registration Failed", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handles navigation view item on clicks
+        int id = item.getItemId();
+
+        if (id == R.id.nav_itinerary) {
+            Intent intent = new Intent(this, PurchaseActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_profile) {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_security) {
+            Intent intent = new Intent(this, SecurityActivity.class);
+            startActivity(intent);
+
+        } else if (id == R.id.nav_about) {
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
+
+        } else if (id == R.id.nav_logout) {
+
+            //getApplicationContext().getSharedPreferences(LoginActivity.MY_PREFERENCES, 0).edit().clear().commit();
+            sessionManager.logOut();
+            Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
+            finish();
+
+        }
+
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

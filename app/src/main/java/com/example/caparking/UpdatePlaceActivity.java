@@ -2,6 +2,8 @@ package com.example.caparking;
 
 import static com.example.caparking.util.LogUtil.logD;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,43 +12,41 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.example.caparking.Common.Common;
 import com.example.caparking.Helper.DBHelper;
 import com.example.caparking.Model.PlaceDetail;
 import com.example.caparking.Remote.IGoogleAPIService;
 import com.example.caparking.databinding.ActivityUpdateParkingBinding;
-import com.example.caparking.databinding.ActivityViewPlaceBinding;
+import com.example.caparking.databinding.ActivityUpdatePlaceBinding;
 import com.example.caparking.util.SessionManager;
 import com.squareup.picasso.Picasso;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ViewPlaceActivity extends AppCompatActivity {
-
+public class UpdatePlaceActivity extends AppCompatActivity {
 
     SessionManager manager;
     IGoogleAPIService mService;
     DBHelper DB;
     PlaceDetail mPlace;
-    private ActivityViewPlaceBinding binding;
-    String price;
 
+
+    private ActivityUpdatePlaceBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        binding = ActivityViewPlaceBinding.inflate(getLayoutInflater());
+        binding = ActivityUpdatePlaceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         DB = new DBHelper(this);
-
 
         mService = Common.getGoogleAPIService();
 
@@ -95,22 +95,22 @@ public class ViewPlaceActivity extends AppCompatActivity {
 
                         binding.placesAddress.setText(mPlace.getResult().getFormatted_address());
                         binding.placesName.setText(mPlace.getResult().getName());
-                        binding.pAddress.setText(mPlace.getResult().getFormatted_address());
-                        binding.pName.setText(mPlace.getResult().getName());
+                        binding.placesAddress.setText(mPlace.getResult().getFormatted_address());
 
-                        Cursor cursor = DB.viewParkingAreas(String.valueOf(DB.GetLocId(binding.placesName.getText().toString())));
+
+                        Cursor cursor = DB.viewParkingAreas(Common.currentResults.getPlace_id());
 
                         if (cursor != null && cursor.getCount() == 1) {
                             cursor.moveToFirst();
-                            price = String.valueOf(cursor.getDouble(2));
 
-                            binding.perPrice.setText(String.valueOf(cursor.getDouble(2)));
+                            //Toast.makeText(getActivity().getApplicationContext(), String.valueOf(cursor.getCount()), Toast.LENGTH_SHORT).show();
+                            binding.seats.setText(String.valueOf(cursor.getInt(1)));
+                            logD("name",mPlace.getResult().getName());
+                            binding.perHourPrice.setText(String.valueOf(cursor.getDouble(2)));
                         }
-
                         else{
                             Log.d("error","error");
                         }
-                        System.out.println("price"+price);
                     }
 
                     @Override
@@ -120,15 +120,33 @@ public class ViewPlaceActivity extends AppCompatActivity {
                 });
     }
 
+    public void updateLocation(View view) {
 
+        String id = Common.currentResults.getPlace_id();
+        String total_seats = binding.seats.getText().toString();
+        String per_hour = binding.perHourPrice.getText().toString();
 
-
-
-    public void parkingSlot(View view) {
-        int id = DB.GetLocId(binding.placesName.getText().toString());
-        manager.createParkingSession(id);
-        Intent intent = new Intent(getApplicationContext(), SeatSelection.class);
-        intent.putExtra("price",price);
-        startActivity(intent);
+        if (total_seats.equals("") || per_hour.equals(""))
+        {
+            Toast.makeText(UpdatePlaceActivity.this, "Please enter all fields", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Boolean checkid= DB.checkLocations(mPlace.getResult().getName());
+            if (checkid==true){
+                Boolean update = DB.updateAreas(Integer.parseInt(id),Integer.parseInt(total_seats), Double.valueOf(per_hour));
+                if (update==true){
+                    Toast.makeText(UpdatePlaceActivity.this, "Bus updated successfully", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), AdminPanel.class);
+                    startActivity(intent);
+                }
+                else {
+                    Toast.makeText(UpdatePlaceActivity.this, "New entry not updated", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else {
+                Toast.makeText(UpdatePlaceActivity.this, "ID doesnot exists", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
