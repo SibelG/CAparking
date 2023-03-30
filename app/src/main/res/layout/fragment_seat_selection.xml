@@ -154,17 +154,17 @@
                                     android:layout_height="wrap_content"
                                     android:orientation="horizontal">
 
-                                    <EditText
+                                    <Button
                                         android:id="@+id/etChooseDepartureTime"
-                                        android:layout_width="100dp"
+                                        android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_centerHorizontal="true"
                                         android:layout_centerVertical="true"
-                                        android:textColor="@color/places_autocomplete_search_hint"
                                         android:hint="Departure"
-                                        android:text="Departure" />
+                                        android:text="Departure"
+                                        android:textColor="@color/colorMediumGray" />
 
-                                    <EditText
+                                    <Button
                                         android:id="@+id/etChooseReturnTime"
                                         android:layout_width="100dp"
                                         android:layout_height="wrap_content"
@@ -173,7 +173,7 @@
                                         android:layout_marginLeft="20dp"
                                         android:hint="Return"
                                         android:text="Return"
-                                        android:textColor="@color/searchBarHintColor" />
+                                        android:textColor="@color/colorMediumGray" />
 
                                 </LinearLayout>
 
@@ -199,7 +199,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/calibri"
-                                    android:text="$600.00"
+                                    android:text="$0.00"
                                     android:textAlignment="textEnd"
                                     android:textColor="#f5a622"
                                     android:textSize="24sp"
@@ -211,7 +211,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="4dp"
                                     android:layout_marginBottom="4dp"
-                                    android:text="3.30 Hour"
+                                    android:text="0.00 Hour"
                                     android:textAlignment="textEnd"
                                     android:textColor="#000000"
                                     android:textSize="16sp" />

@@ -5,19 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".payment_activity">
+    tools:context=".PaymentFragment">
 
 
     <com.braintreepayments.cardform.view.CardForm
         android:id="@+id/card_form"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.374"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.254" />
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="8dp"
+        android:minHeight="48dp"
+        android:text="Save Card"
+        app:flow_firstHorizontalBias="0.082"
+        app:layout_constraintBottom_toTopOf="@+id/cancel"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnBuy"
@@ -37,7 +50,7 @@
         tools:ignore="TextContrastCheck" />
 
     <Button
-        android:id="@+id/button05"
+        android:id="@+id/cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cancel"
@@ -49,5 +62,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.789"
         app:rippleColor="#AE5B5B" />
+
+    <TextView
+        android:id="@+id/totalPrice"
+        android:layout_width="87dp"
+        android:layout_height="44dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:text="$0.00"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnBuy"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

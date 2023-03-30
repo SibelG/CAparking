@@ -8,17 +8,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import dagger.hilt.android.AndroidEntryPoint;
+
+public class SecurityFragment extends Fragment {
 
 
-@AndroidEntryPoint
-public class FavoritesFragment extends Fragment {
 
-
-    public FavoritesFragment() {
+    public SecurityFragment() {
         // Required empty public constructor
     }
 
+
+    // TODO: Rename and change types and number of parameters
+    public static SecurityFragment newInstance(String param1, String param2) {
+        SecurityFragment fragment = new SecurityFragment();
+
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,6 @@ public class FavoritesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorites, container, false);
+        return inflater.inflate(R.layout.fragment_security, container, false);
     }
 }

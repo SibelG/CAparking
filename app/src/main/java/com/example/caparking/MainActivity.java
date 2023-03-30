@@ -7,6 +7,11 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import dagger.hilt.android.AndroidEntryPoint;
+import dagger.hilt.android.migration.OptionalInject;
+
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
     @Override

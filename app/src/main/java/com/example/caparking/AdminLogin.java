@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.caparking.Helper.DBHelper;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class AdminLogin extends AppCompatActivity {
 
     public static final String MY_PREFERENCES = "MY_PREFS";

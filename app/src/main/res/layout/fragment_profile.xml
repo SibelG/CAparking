@@ -4,27 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_marginTop="80dp"
     android:background="@color/colorLightGray"
-    tools:context=".ProfileActivity">
+    android:orientation="vertical"
+    tools:context=".ProfileFragment">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="15dp"
-                android:layout_weight="2"
-                android:gravity="center"
                 android:layout_marginBottom="16dp"
-                android:background="@color/backgroundDefault">
-
+                android:layout_weight="2"
+                android:background="@color/backgroundDefault"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="15dp">
 
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -32,18 +34,18 @@
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:src="@drawable/placeholder"
-                    app:civ_border_width="2dp"
-                    app:civ_border_color="#FF000000"/>
+                    app:civ_border_color="#FF000000"
+                    app:civ_border_width="2dp" />
 
                 <TextView
                     android:id="@+id/txtFullName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="25sp"
-                    android:fontFamily="sans-serif-thin"
-                    android:gravity="center"
                     android:layout_marginTop="16dp"
-                    android:text="John Doe"/>
+                    android:fontFamily="sans-serif-light"
+                    android:gravity="center"
+                    android:text="John Doe"
+                    android:textSize="25sp" />
 
                 <ImageButton
                     android:id="@+id/btnEditProfilePicture"
@@ -59,21 +61,21 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:padding="15dp"
-                android:gravity="center"
                 android:layout_marginBottom="16dp"
-                android:background="@color/backgroundDefault">
+                android:layout_weight="1"
+                android:background="@color/backgroundDefault"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="15dp">
 
                 <TextView
                     android:id="@+id/profileHeading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:textSize="25sp"
-                    android:fontFamily="sans-serif-thin"
-                    android:text="Account Information" />
+                    android:fontFamily="sans-serif-light"
+                    android:text="Account Information"
+                    android:textSize="25sp" />
 
 
                 <TextView
@@ -81,20 +83,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:text="FirstName: John"/>
+                    android:text="FirstName: John" />
 
-                <TextView
-                    android:id="@+id/txtClientLastName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:text="Las name: Doe"/>
                 <TextView
                     android:id="@+id/txtClientEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:text="Email: john.doe@gmail.com"/>
+                    android:text="Email: john.doe@gmail.com" />
 
                 <TextView
                     android:id="@+id/txtClientPhone"
@@ -102,12 +98,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:text="Phone:" />
+
                 <TextView
                     android:id="@+id/txtClientCreditCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:text="Credit Card: **** **** **** 2048"/>
+                    android:text="Credit Card: **** **** **** 2048" />
 
 
                 <ImageButton
@@ -117,7 +114,6 @@
                     android:layout_gravity="right"
                     android:background="@drawable/ic_edit_black_24dp"
                     tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
-
 
 
             </LinearLayout>

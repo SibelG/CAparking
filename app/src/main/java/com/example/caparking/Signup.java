@@ -15,6 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.caparking.Constants.Constants;
 import com.example.caparking.Helper.DBHelper;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class Signup extends AppCompatActivity {
 
     DBHelper DB;

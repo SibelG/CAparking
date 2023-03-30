@@ -57,10 +57,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import java.io.IOException;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
+@AndroidEntryPoint
 public class UpdateParkingArea extends FragmentActivity implements OnMapReadyCallback {
 
 

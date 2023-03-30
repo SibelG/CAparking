@@ -1,7 +1,6 @@
 package com.example.caparking;
 
 import static com.example.caparking.Helper.HelperUtilities.currentDate;
-import static com.example.caparking.Helper.HelperUtilities.formatDate;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -14,46 +13,42 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
-import android.media.Image;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import androidx.annotation.ColorRes;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 
 import com.example.caparking.Helper.DBHelper;
 import com.example.caparking.Helper.HelperUtilities;
-import com.example.caparking.databinding.ActivityMainBinding;
-import com.example.caparking.databinding.ActivitySeatSelectionBinding;
+import com.example.caparking.databinding.FragmentSeatSelectionBinding;
 import com.example.caparking.util.SessionManager;
-
-import org.w3c.dom.Text;
 
 import java.util.Calendar;
 
-public class SeatSelection extends AppCompatActivity implements View.OnClickListener {
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class SeatSelection extends Fragment implements View.OnClickListener {
 
 
     SessionManager manager;
-    DBHelper DB = new DBHelper(this);
+    DBHelper DB;
     private SQLiteDatabase db;
     int flagChecked = 0;
-    private boolean flightExists = false;
-    private SharedPreferences sharedPreferences;
-    private String fare;
+    private String fare,time1,time2;
     private int parkingID;
     private int userID;
     private int tempYear;
@@ -65,15 +60,14 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
     ImageButton c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,
     c11,c12,c13,c14,c15,c16,c17,c18,c19,c20,c21,c22,c23,c24,c25,
     c26,c27,c28,c29,c30,c31,c32;
-    private ActivitySeatSelectionBinding binding;
     private DatePickerDialog datePickerDialog2;
-    double totalFare;
+    double totalFare=0.0;
 
     TimePickerDialog timePickerDialog,timePickerDialog2;
     Calendar calendar;
     int currentHour;
     int currentMinute;
-    String amPm,departureTime,returnTime,parkingDate;
+    String amPm,departureTime,returnTime,parkingDate,date;
     //current date
     private int year;
     private int month;
@@ -84,57 +78,59 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
     private final int ROUND_DEPARTURE_TIME_PICKER = R.id.etChooseDepartureTime;
     private final int ROUND_RETURN_TIME_PICKER = R.id.etChooseReturnTime;
 
+    private FragmentSeatSelectionBinding binding;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_seat_selection);
-        binding = ActivitySeatSelectionBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+
+        binding = FragmentSeatSelectionBinding.inflate(
+                inflater, container, false);
+        View view = binding.getRoot();
+
 
         binding.textDate.setText(currentDate());
-        manager=new SessionManager(getApplicationContext());
-        sharedPreferences = getApplicationContext().getSharedPreferences("PARKING_USER", Context.MODE_PRIVATE);
+        //binding.btnRoundDepartureDatePicker.setText(currentDate());
+
         userID = manager.getToken();
         //Toast.makeText(this, String.valueOf(userID), Toast.LENGTH_SHORT).show();
         parkingID = manager.getParkingId();
-        fare = getIntent().getStringExtra("price");
+        fare = getArguments().getString("price");
 
 
-        c1 = findViewById(R.id.A1);
-        c2 = findViewById(R.id.A2);
-        c3 = findViewById(R.id.A3);
-        c4 = findViewById(R.id.A4);
-        c5 = findViewById(R.id.A5);
-        c6 = findViewById(R.id.A6);
-        c7 = findViewById(R.id.A7);
-        c8 = findViewById(R.id.A8);
-        c9 = findViewById(R.id.B1);
-        c10 = findViewById(R.id.B2);
-        c11 = findViewById(R.id.B3);
-        c12 = findViewById(R.id.B4);
-        c13 = findViewById(R.id.B5);
-        c14 = findViewById(R.id.B6);
-        c15 = findViewById(R.id.B7);
-        c16 = findViewById(R.id.B8);
-        c17 = findViewById(R.id.C1);
-        c18 = findViewById(R.id.C2);
-        c19 = findViewById(R.id.C3);
-        c20 = findViewById(R.id.C4);
-        c21 = findViewById(R.id.C5);
-        c22 = findViewById(R.id.C6);
-        c23 = findViewById(R.id.C7);
-        c24 = findViewById(R.id.C8);
-        c25 = findViewById(R.id.D1);
-        c26 = findViewById(R.id.D2);
-        c27 = findViewById(R.id.D3);
-        c28 = findViewById(R.id.D4);
-        c29 = findViewById(R.id.D5);
-        c30 = findViewById(R.id.D6);
-        c31 = findViewById(R.id.D7);
-        c32 = findViewById(R.id.D8);
+        c1 = binding.A1;
+        c2 = binding.A2;
+        c3 = binding.A3;
+        c4 = binding.A4;
+        c5 = binding.A5;
+        c6 = binding.A6;
+        c7 = binding.A7;
+        c8 = binding.A8;
+        c9 = binding.B1;
+        c10 = binding.B2;
+        c11 = binding.B3;
+        c12 = binding.B4;
+        c13 = binding.B5;
+        c14 = binding.B6;
+        c15 = binding.B7;
+        c16 = binding.B8;
+        c17 = binding.C1;
+        c18 = binding.C2;
+        c19 = binding.C3;
+        c20 = binding.C4;
+        c21 = binding.C5;
+        c22 = binding.C6;
+        c23 = binding.C7;
+        c24 = binding.C8;
+        c25 = binding.D1;
+        c26 = binding.D2;
+        c27 = binding.D3;
+        c28 = binding.D4;
+        c29 = binding.D5;
+        c30 = binding.D6;
+        c31 = binding.D7;
+        c32 = binding.D8;
         c1.setOnClickListener(this);
         c1.setOnClickListener(this);
         c2.setOnClickListener(this);
@@ -146,14 +142,38 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
         c8.setOnClickListener(this);
         c9.setOnClickListener(this);
         c10.setOnClickListener(this);
+        c11.setOnClickListener(this);
+        c12.setOnClickListener(this);
+        c13.setOnClickListener(this);
+        c14.setOnClickListener(this);
+        c15.setOnClickListener(this);
+        c16.setOnClickListener(this);
+        c17.setOnClickListener(this);
+        c18.setOnClickListener(this);
+        c19.setOnClickListener(this);
+        c20.setOnClickListener(this);
+        c21.setOnClickListener(this);
+        c22.setOnClickListener(this);
+        c23.setOnClickListener(this);
+        c24.setOnClickListener(this);
+        c25.setOnClickListener(this);
+        c26.setOnClickListener(this);
+        c27.setOnClickListener(this);
+        c28.setOnClickListener(this);
+        c29.setOnClickListener(this);
+        c30.setOnClickListener(this);
+        c31.setOnClickListener(this);
+        c32.setOnClickListener(this);
 
         binding.btncardpay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isValidRoundInput()){
                     bookFlight();
-                    Intent i = new Intent(SeatSelection.this, payment_activity.class);
-                    startActivity(i);
+
+                    /*Intent i = new Intent(SeatSelection.this, payment_activity.class);
+                    getIntent().putExtra("totalPrice",totalFare);
+                    startActivity(i);*/
 
 
                 }
@@ -193,8 +213,21 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
 
 
         binding.perFare.setText(fare+" Hour");
+        //here data must be an instance of the class MarsDataProvider
+        return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        ((MapsActivity)getActivity()).setNavigationVisibility(false);
+        manager=new SessionManager(requireContext());
+        DB = new DBHelper(requireContext());
 
     }
+
+
 
     private void checkIsBooked(Integer i) {
         if (flagChecked != 0) {
@@ -371,20 +404,7 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-
-        if(departureTime.equalsIgnoreCase("departure") && returnTime.equalsIgnoreCase("return")){
-            var date1= binding.etChooseDepartureTime.getText().toString();
-            var date2= binding.etChooseReturnTime.getText().toString();
-            totalFare = HelperUtilities.calculateTotalFare(Double.parseDouble(fare),date1,date2);
-            binding.totalFare.setText("$"+totalFare);
-        }
-
-
-    }
 
     private void setDefaultColor(Integer i) {
         switch (i) {
@@ -588,13 +608,14 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
             default:
         }
     }
-    @Override
-    protected void onStart() {
-        super.onStart();
+
+    private void checkIsBooking(String date){
+
         flagChecked = 0;
         db = DB.getWritableDatabase();
         Cursor cursor = DB.viewParkingAreas(String.valueOf(parkingID));
-        var date = binding.btnRoundDepartureDatePicker.getText().toString();
+
+
 
         if (cursor != null && cursor.getCount() == 1) {
             cursor.moveToFirst();
@@ -602,8 +623,8 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
             int  seatCount = cursor.getInt(1);
             Log.d("seat", String.valueOf(seatCount));
 
-            for (int i=0;i< seatCount;i++){
-                boolean check = DB.checkSeats(parkingID,i,"26 Mart 2023 Pazar");
+            for (int i=0;i<seatCount+1;i++){
+                boolean check = DB.checkSeats(parkingID,i,date);
                 if(check){
                     setColorGRAY(i);
                     Log.d("seatNumber", String.valueOf(i));
@@ -612,8 +633,13 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
 
         }
         else{
-            Log.d("error","errorrrrrrr");
+            Log.d("error","database error");
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
     }
 
@@ -622,8 +648,15 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
             departureTime = binding.etChooseDepartureTime.getText().toString();
             returnTime= binding.etChooseReturnTime.getText().toString();
             parkingDate = binding.btnRoundDepartureDatePicker.getText().toString();
+
+            manager.createSeatSession(getArguments().getString("parkName"),flagChecked,returnTime, String.valueOf(totalFare));
             DB.insertSeat(db, departureTime, returnTime,parkingDate,flagChecked,1,totalFare,parkingID,userID);
-            bookFlightDialog().show();
+            //bookFlightDialog().show();
+
+            PaymentFragment ldf = new PaymentFragment ();
+            getFragmentManager().beginTransaction().add(R.id.nav_host_fragment, ldf).commit();
+
+
 
         }catch(SQLiteException e){
 
@@ -636,7 +669,7 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
         switch (timePickerId) {
             case ROUND_DEPARTURE_TIME_PICKER:
 
-                        timePickerDialog = new TimePickerDialog(SeatSelection.this, new TimePickerDialog.OnTimeSetListener() {
+                        timePickerDialog = new TimePickerDialog(requireContext(), new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
                                 if (hourOfDay >= 12) {
@@ -655,7 +688,7 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
 
             case ROUND_RETURN_TIME_PICKER:
 
-                        timePickerDialog2 = new TimePickerDialog(SeatSelection.this, new TimePickerDialog.OnTimeSetListener() {
+                        timePickerDialog2 = new TimePickerDialog(requireContext(), new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
                                 if (hourOfDay >= 12) {
@@ -665,14 +698,19 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
                                 }
                                 String departureDate = tempHour + ":" + tempMinute;
                                 String returnDate = hourOfDay+ ":" + minutes;
-                                Toast.makeText(getApplicationContext(),departureDate,Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(),departureDate,Toast.LENGTH_SHORT).show();
 
                                 if (HelperUtilities.compareTime(departureDate, returnDate)) {
                                     timePickerAlert().show();
                                     isValidRoundDate = false;
                                 } else {
+
                                     isValidRoundDate = true;
                                     binding.etChooseReturnTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
+                                    time1 = binding.etChooseDepartureTime.getText().toString();
+                                    time2 = binding.etChooseReturnTime.getText().toString();
+                                    totalFare = HelperUtilities.calculateTotalFare(Double.parseDouble(fare),time1,time2);
+                                    binding.totalFare.setText("$"+totalFare);
                                 }
 
                             }
@@ -684,7 +722,6 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
         }
 
     return null;
-
     }
 
     public DatePickerDialog datePickerDialog(int datePickerId) {
@@ -694,7 +731,7 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
             case ROUND_DATE_PICKER:
 
                 if (datePickerDialog2 == null) {
-                    datePickerDialog2 = new DatePickerDialog(this, getRoundDepartureDatePickerListener(), year, month, day);
+                    datePickerDialog2 = new DatePickerDialog(requireContext(), getRoundDepartureDatePickerListener(), year, month, day);
                 }
                 datePickerDialog2.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 return datePickerDialog2;
@@ -706,8 +743,12 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
 
     public boolean isValidRoundInput() {
 
+        if(flagChecked==0){
+            seatDialog().show();
+           return false;
+        }
         if (binding.btnRoundDepartureDatePicker.getText().toString().equalsIgnoreCase("select date")) {
-            datePickerTwoAlert().show();
+            datePickerAlert().show();
             return false;
         }
         if (binding.etChooseDepartureTime.getText().toString().equalsIgnoreCase("departure")) {
@@ -725,7 +766,7 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
 
     public Dialog bookFlightDialog() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(SeatSelection.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setMessage("Your flight booked successfully. ")
                 .setCancelable(false)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -737,10 +778,23 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
         return builder.create();
     }
 
-    public Dialog flightAlreadyBookedAlert() {
+    public Dialog seatDialog() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(SeatSelection.this);
-        builder.setMessage("You already booked this flight. ")
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setMessage("Select seat number! ")
+                .setCancelable(false)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+        return builder.create();
+    }
+    public Dialog datePickerAlert() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setMessage("Please select a parking date. ")
                 .setCancelable(false)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -765,6 +819,8 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
                 //get round trip departure date here
                 roundDepartureDate = startYear + "-" + (startMonth + 1) + "-" + startDay;
                 binding.btnRoundDepartureDatePicker.setText(HelperUtilities.formatDate(startYear, startMonth, startDay));
+                date = binding.btnRoundDepartureDatePicker.getText().toString();
+                checkIsBooking(date);
             }
         };
     }
@@ -772,7 +828,7 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
 
 
     public Dialog timePickerAlert() {
-        return new AlertDialog.Builder(this)
+        return new AlertDialog.Builder(requireContext())
                 .setMessage("Please select a valid return time. The return time cannot be before the departure time.")
                 .setCancelable(false)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -782,7 +838,7 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
     }
 
     public Dialog timePickerOneAlert() {
-        return new AlertDialog.Builder(this)
+        return new AlertDialog.Builder(requireContext())
                 .setMessage("Please select a departure date.")
                 .setCancelable(false)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -792,7 +848,7 @@ public class SeatSelection extends AppCompatActivity implements View.OnClickList
     }
 
     public Dialog datePickerTwoAlert() {
-        return new AlertDialog.Builder(this)
+        return new AlertDialog.Builder(requireContext())
                 .setMessage("Please select a return date.")
                 .setCancelable(false)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {

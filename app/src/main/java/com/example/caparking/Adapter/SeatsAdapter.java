@@ -1,22 +1,18 @@
 package com.example.caparking.Adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.caparking.Model.ParkingAreas;
+import com.example.caparking.Model.Card;
 import com.example.caparking.Model.Seats;
 import com.example.caparking.R;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SeatsAdapter extends RecyclerView.Adapter<SeatsAdapter.MyViewHolder>{
@@ -32,8 +28,8 @@ public class SeatsAdapter extends RecyclerView.Adapter<SeatsAdapter.MyViewHolder
         TextView purchase_location_name, purchase_location_date, purchase_location_amount, purchase_location_paid;
         MyViewHolder(View view) {
             super(view);
-            purchase_location_name = (TextView) view.findViewById(R.id.purchase_location_name);
-            purchase_location_date = (TextView) view.findViewById(R.id.purchase_location_date);
+            purchase_location_name = (TextView) view.findViewById(R.id.card_name);
+            purchase_location_date = (TextView) view.findViewById(R.id.card_number);
             purchase_location_amount = (TextView) view.findViewById(R.id.purchase_location_amount);
             purchase_location_paid = (TextView) view.findViewById(R.id.purchase_location_paid);
         }
@@ -51,7 +47,7 @@ public class SeatsAdapter extends RecyclerView.Adapter<SeatsAdapter.MyViewHolder
         final Seats detail = purchase_list.get(position);
         holder.purchase_location_name.setText(detail.getParkingName());
         holder.purchase_location_date.setText(detail.getDate());
-        //holder.purchase_location_amount.setText(NumberFormat.getCurrencyInstance().format(detail.getParkingAreas().getPerHourPrice()));
+        holder.purchase_location_amount.setText(NumberFormat.getCurrencyInstance().format(detail.getTotalAmount()));
         if(detail.getSeatStatus()==1){
             holder.purchase_location_paid.setText("In Progress");
         }

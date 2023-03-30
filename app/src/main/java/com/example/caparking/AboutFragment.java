@@ -10,12 +10,10 @@ import android.view.ViewGroup;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-
 @AndroidEntryPoint
-public class FavoritesFragment extends Fragment {
+public class AboutFragment extends Fragment {
 
-
-    public FavoritesFragment() {
+    public AboutFragment() {
         // Required empty public constructor
     }
 
@@ -30,6 +28,6 @@ public class FavoritesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorites, container, false);
+        return inflater.inflate(R.layout.fragment_about, container, false);
     }
 }

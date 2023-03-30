@@ -7,7 +7,7 @@
     android:background="@drawable/customborder"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ViewPlaceActivity">
+    tools:context=".ViewPlaceFragment">
     <ScrollView
 
         android:layout_width="match_parent"
@@ -127,7 +127,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:backgroundTint="#0692D1"
-                            android:onClick="parkingSlot"
                             android:text="More Informatıon"
                             android:textSize="12sp"
                             tools:ignore="TouchTargetSizeCheck" />

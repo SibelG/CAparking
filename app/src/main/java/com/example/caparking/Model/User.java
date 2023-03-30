@@ -15,12 +15,11 @@ public class User {
     public User() {
     }
 
-    public User(String name, String email, String fullname, String phone, String creditCard){
+    public User(String name, String email, String fullname){
         this.name=name;
         this.email=email;
         this.fullname=fullname;
-        this.phone = phone;
-        this.creditCard = creditCard;
+
 
     }
 

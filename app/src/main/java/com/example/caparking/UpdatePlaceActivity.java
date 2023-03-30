@@ -27,12 +27,17 @@ import com.example.caparking.databinding.ActivityUpdatePlaceBinding;
 import com.example.caparking.util.SessionManager;
 import com.squareup.picasso.Picasso;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@AndroidEntryPoint
 public class UpdatePlaceActivity extends AppCompatActivity {
 
+    @Inject
     SessionManager manager;
     IGoogleAPIService mService;
     DBHelper DB;

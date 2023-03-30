@@ -8,52 +8,62 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.caparking.Common.Common;
 import com.example.caparking.Helper.DBHelper;
 import com.example.caparking.Model.PlaceDetail;
 import com.example.caparking.Remote.IGoogleAPIService;
-import com.example.caparking.databinding.ActivityUpdateParkingBinding;
-import com.example.caparking.databinding.ActivityViewPlaceBinding;
+import com.example.caparking.databinding.FragmentViewPlaceBinding;
 import com.example.caparking.util.SessionManager;
 import com.squareup.picasso.Picasso;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ViewPlaceActivity extends AppCompatActivity {
+@AndroidEntryPoint
+public class ViewPlaceFragment extends Fragment {
 
-
+    @Inject
     SessionManager manager;
     IGoogleAPIService mService;
     DBHelper DB;
     PlaceDetail mPlace;
-    private ActivityViewPlaceBinding binding;
+    private FragmentViewPlaceBinding binding;
     String price;
 
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        binding = ActivityViewPlaceBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        DB = new DBHelper(this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
 
 
-        mService = Common.getGoogleAPIService();
+
+        binding = FragmentViewPlaceBinding.inflate(
+                inflater, container, false);
+        View view = binding.getRoot();
 
         binding.placesName.setText("");
         binding.placesAddress.setText("");
         binding.placesOpenHour.setText("");
-        manager=new SessionManager(getApplicationContext());
+
 
         binding.btnShowMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,9 +73,16 @@ public class ViewPlaceActivity extends AppCompatActivity {
             }
         });
 
+        binding.seatSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                parkingSlot();
+            }
+        });
+
         if (Common.currentResults.getPhotos() != null && Common.currentResults.getPhotos().length > 0)  {
 
-            Picasso.with(this)
+            Picasso.with(requireContext())
                     .load(Common.getPhotoOfPlaces(Common.currentResults.getPhotos()[0].getPhoto_reference(),1000))
                     .placeholder(R.drawable.ic_image_black_24dp)
                     .error(R.drawable.ic_error_black_24dp)
@@ -118,17 +135,34 @@ public class ViewPlaceActivity extends AppCompatActivity {
 
                     }
                 });
+        //here data must be an instance of the class MarsDataProvider
+        return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        DB = new DBHelper(requireContext());
+        manager = new SessionManager(requireContext());
+        mService = Common.getGoogleAPIService();
+
+
     }
 
 
 
 
 
-    public void parkingSlot(View view) {
+    public void parkingSlot() {
         int id = DB.GetLocId(binding.placesName.getText().toString());
         manager.createParkingSession(id);
-        Intent intent = new Intent(getApplicationContext(), SeatSelection.class);
-        intent.putExtra("price",price);
-        startActivity(intent);
+        SeatSelection ldf = new SeatSelection ();
+        Bundle args = new Bundle();
+        args.putString("price", price);
+        args.putString("parkName",binding.placesName.getText().toString());
+        ldf.setArguments(args);
+        getFragmentManager().beginTransaction().add(R.id.nav_host_fragment, ldf).commit();
+
     }
 }

@@ -69,6 +69,7 @@ public class HelperUtilities {
         String visaRegex = "^4[0-9]{12}(?:[0-9]{3})?$";
         String masterRegex = "^5[1-5][0-9]{14}$";
         String expressRegex = "^3[47][0-9]{13}$";
+        String dinersRegex = "^3(?:0[0-5]|[68][0-9])[0-9]{11}$";
 
 
         if (creditCardNo.matches(visaRegex)) {
@@ -77,9 +78,31 @@ public class HelperUtilities {
             return true;
         } else if (creditCardNo.matches(expressRegex)) {
             return true;
+        } else if (creditCardNo.matches(dinersRegex)) {
+            return true;
         }
 
         return false;
+
+    }
+    public static String getCredidCard(String creditCardNo){
+
+        String visaRegex = "^4[0-9]{12}(?:[0-9]{3})?$";
+        String masterRegex = "^5[1-5][0-9]{14}$";
+        String expressRegex = "^3[47][0-9]{13}$";
+        String dinersRegex = "^3(?:0[0-5]|[68][0-9])[0-9]{11}$";
+
+        if (creditCardNo.matches(visaRegex)) {
+            return "Visa";
+        }else if (creditCardNo.matches(masterRegex)) {
+            return "MasterCard";
+        }else if (creditCardNo.matches(expressRegex)) {
+            return "American Express";
+        }else if (creditCardNo.matches(dinersRegex)){
+            return "DinersClub";
+        }
+
+        return "";
 
     }
 
@@ -245,7 +268,9 @@ public class HelperUtilities {
     }
 
     public static Double calculateTotalFare(double fare, String departureTime, String returnTime){
+        double total=0.0;
         try {
+
 
             SimpleDateFormat format = new SimpleDateFormat("HH:mm");
             Date date1 = format.parse(departureTime);
@@ -256,12 +281,15 @@ public class HelperUtilities {
                 long diffHours = difference / (60 * 60 * 1000) % 24;
 
                 if(diffHours<2){
-                    return fare;
+                    total = fare;
+                    return total;
                 }else if (diffHours>2 && diffHours<3 ){
-                    return fare+1;
+                    total=fare+1;
+                    return total;
                 }
                 else{
-                    return diffHours * fare;
+                    total = diffHours*fare;
+                    return total;
                 }
             }
 
@@ -269,7 +297,7 @@ public class HelperUtilities {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0.0;
+        return total;
 }
 
     public static boolean compareTime(String departureTime, String returnTime) {

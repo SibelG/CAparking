@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.caparking.Helper.DBHelper;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class AdminSignup extends AppCompatActivity {
 
     private boolean isValid;

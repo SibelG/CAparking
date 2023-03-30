@@ -10,18 +10,22 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.caparking.Helper.DBHelper;
 import com.example.caparking.util.SessionManager;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class Login extends AppCompatActivity {
 
-    public static final String MY_PREFERENCES = "MY_PREFS";
-    public static final String EMAIL = "EMAIL";
-    public static final String CLIENT_ID = "CLIENT_ID";
-    public static final String LOGIN_STATUS = "LOGGED_IN";
-    public static SharedPreferences sharedPreferences;
-    private SessionManager manager;
+    @Inject
+    SessionManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +39,19 @@ public class Login extends AppCompatActivity {
         Button signup = findViewById(R.id.signup);
         DBHelper DB = new DBHelper(this);
 
-        manager=new SessionManager(getApplicationContext());
+        manager = new SessionManager(getApplicationContext());
 
         //checks the login status and redirects to the main activity
         if (manager.isLoggedIn()) {
+
             Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
             startActivity(intent);
             finish();
             return;
+
+
         }
+
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,8 +69,9 @@ public class Login extends AppCompatActivity {
                         Toast.makeText(Login.this, String.valueOf(id), Toast.LENGTH_SHORT).show();
 
                         Toast.makeText(Login.this, "LogIn Successful", Toast.LENGTH_SHORT).show();
-                        Intent intent= new Intent(getApplicationContext(), MapsActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                         startActivity(intent);
+
                     }
                     else{
                         Toast.makeText(Login.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
@@ -90,5 +99,17 @@ public class Login extends AppCompatActivity {
         });
 
 
+
+
+
     }
+
+    private void replaceFragment (){
+        MapsFragment newFragment = new MapsFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.nav_host_fragment, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
 }

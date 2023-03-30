@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.caparking.Helper.DBHelper;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class AdminPanel extends AppCompatActivity {
 
     @Override
@@ -26,7 +29,8 @@ public class AdminPanel extends AppCompatActivity {
         Button end = findViewById(R.id.logout);
         DBHelper DB = new DBHelper(this);
 
-        add.setOnClickListener(new View.OnClickListener() {
+
+        update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
@@ -34,21 +38,13 @@ public class AdminPanel extends AppCompatActivity {
             }
         });
 
-        /*update.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), UpdateParking.class);
-                startActivity(intent);
-            }
-        });
-
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), DeleteParking.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(getApplicationContext(), DeleteParking.class);
+                startActivity(intent);*/
             }
-        });*/
+        });
 
         /*view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +69,7 @@ public class AdminPanel extends AppCompatActivity {
                 builder.show();
             }
         });*/
+
         end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,6 +78,6 @@ public class AdminPanel extends AppCompatActivity {
             }
         });
 
-            }
-        }
+    }
+}
 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mapsFragment">
+
+    <fragment
+        android:id="@+id/paymentFragment"
+        android:name="com.example.caparking.PaymentFragment"
+        android:label="PaymentFragment" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.caparking.AboutFragment"
+        android:label="fragment_about"
+        tools:layout="@layout/fragment_about" />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.caparking.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.example.caparking.ProfileFragment"
+        android:label="ProfileFragment" >
+        <action
+            android:id="@+id/action_profileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/seatSelection"
+        android:name="com.example.caparking.SeatSelection"
+        android:label="fragment_seat_selection"
+        tools:layout="@layout/fragment_seat_selection" >
+        <action
+            android:id="@+id/action_seatSelection_to_paymentFragment"
+            app:destination="@id/paymentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/viewPlaceFragment"
+        android:name="com.example.caparking.ViewPlaceFragment"
+        android:label="ViewPlaceFragment" >
+        <action
+            android:id="@+id/action_viewPlaceFragment_to_seatSelection"
+            app:destination="@id/seatSelection" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.example.caparking.MapsFragment"
+        android:label="MapsFragment" >
+        <action
+            android:id="@+id/action_mapsFragment_to_viewPlaceFragment"
+            app:destination="@id/viewPlaceFragment" />
+    </fragment>
+</navigation>
