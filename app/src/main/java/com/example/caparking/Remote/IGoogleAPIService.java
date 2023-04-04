@@ -1,5 +1,6 @@
 package com.example.caparking.Remote;
 
+import com.example.caparking.Model.ModelResultNearby;
 import com.example.caparking.Model.MyPlaces;
 import com.example.caparking.Model.PlaceDetail;
 

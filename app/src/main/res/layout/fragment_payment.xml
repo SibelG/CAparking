@@ -4,75 +4,137 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@drawable/custom_selector"
     tools:context=".PaymentFragment">
 
 
-    <com.braintreepayments.cardform.view.CardForm
-        android:id="@+id/card_form"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+
+        <com.braintreepayments.cardform.view.CardForm
+            android:id="@+id/card_form"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="80dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.374"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.254" />
+
+
+
+    <LinearLayout
+        android:id="@+id/payLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="80dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bgrounded"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.374"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.254" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Card Informations"
+            android:textColor="#000000" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Saved Cards"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/payOther"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="20dp"
+                android:text="Pay Other Card"
+                android:textAlignment="textEnd"
+                android:textColor="#FF5722" />
+
+        </LinearLayout>
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+        <CheckBox
+            android:id="@+id/checkBox2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="I  want  to with 3D Secure" />
+
+    </LinearLayout>
+
 
     <CheckBox
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="32dp"
         android:minHeight="48dp"
         android:text="Save Card"
         app:flow_firstHorizontalBias="0.082"
-        app:layout_constraintBottom_toTopOf="@+id/cancel"
+        app:layout_constraintBottom_toTopOf="@+id/btnBuy"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnBuy"
-        android:layout_width="413dp"
-        android:layout_height="54dp"
+        android:layout_width="177dp"
+        android:layout_height="52dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="32dp"
         android:background="@color/colorAccent"
         android:text="BUY NOW"
         android:textColor="#263238"
         app:backgroundTint="#03A9F4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.919"
-        tools:ignore="TextContrastCheck" />
-
-    <Button
-        android:id="@+id/cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cancel"
-        app:backgroundTint="#F40606"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.082"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.789"
-        app:rippleColor="#AE5B5B" />
+        app:layout_constraintVertical_bias="0.938"
+        tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/totalPrice"
         android:layout_width="87dp"
         android:layout_height="44dp"
-        android:layout_marginEnd="36dp"
-        android:layout_marginBottom="32dp"
-        android:gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="72dp"
+        android:gravity="center|start"
         android:text="$0.00"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/btnBuy"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Total"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/totalPrice"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

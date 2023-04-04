@@ -55,7 +55,7 @@ public class EditProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        ((MapsActivity)getActivity()).setNavigationVisibility(true);
         manager = new SessionManager(getContext());
         userId = manager.getToken();
 

@@ -33,8 +33,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 " email TEXT, fullname TEXT,Phone TEXT, CredidCard TEXT ,Image BLOB)");
         MyDB.execSQL("create Table parkingAreas(id INTEGER primary key AUTOINCREMENT, total_seats INTEGER, perHourPrice REAL, parkingName TEXT)");
         MyDB.execSQL("create Table admin(id INTEGER primary key AUTOINCREMENT, username TEXT, password TEXT, email TEXT, fullname TEXT)");
-        MyDB.execSQL("create Table seats(id INTEGER primary key AUTOINCREMENT,  departure TEXT, arrival TEXT, date TEXT, seatNumber INTEGER, seatStatus INTEGER, totalAmount REAL ,seatParking INTEGER, userId INTEGER, FOREIGN KEY(seatParking) REFERENCES parkingAreas(id), FOREIGN KEY(userId) REFERENCES users(id))");
-        MyDB.execSQL("create Table cards(id INTEGER primary key AUTOINCREMENT, cardNumber TEXT, userId INTEGER, FOREIGN KEY(userId) REFERENCES users(id))");
+        MyDB.execSQL("create Table seats(id INTEGER primary key AUTOINCREMENT,  departure TEXT, arrival TEXT, date TEXT, isPaid INTEGER,seatNumber INTEGER, seatStatus INTEGER, totalAmount REAL ,seatParking INTEGER, userId INTEGER, FOREIGN KEY(seatParking) REFERENCES parkingAreas(id), FOREIGN KEY(userId) REFERENCES users(id))");
+        MyDB.execSQL("create Table cards(id INTEGER primary key AUTOINCREMENT, cardNumber TEXT, cardExpiryDate TEXT, cardCVV TEXT ,postalCode TEXT, phoneNumber TEXT, userId INTEGER, FOREIGN KEY(userId) REFERENCES users(id))");
+        MyDB.execSQL("create table reminder(id INTEGER primary key AUTOINCREMENT,title TEXT,date TEXT,time TEXT)");
     }
 
     @Override
@@ -43,6 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
         MyDB.execSQL("drop Table if exists parkingAreas");
         MyDB.execSQL("drop table if exists admin");
         MyDB.execSQL("drop table if exists seats");
+        MyDB.execSQL("drop table if exists reminder");
 
     }
 
@@ -60,6 +62,30 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
     }
 
+    public Boolean addreminder(String title, String date, String time) {
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("title", title);                                                          //Inserts  data into sqllite database
+        contentValues.put("date", date);
+        contentValues.put("time", time);
+
+        long result = database.insert("reminder", null, contentValues);    //returns -1 if data successfully inserts into database
+
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
+    public Cursor readallreminders() {
+        SQLiteDatabase database = this.getWritableDatabase();
+        String query = "select * from reminder order by id desc";                               //Sql query to  retrieve  data from the database
+        Cursor cursor = database.rawQuery(query, null);
+        return cursor;
+    }
 
     public Boolean insertadmin(String fullname, String email, String username, String password) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
@@ -74,10 +100,14 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
     }
 
-    public Boolean insertcard(String cardNumber, int userId) {
+    public Boolean insertcard(String cardNumber, String Card_expiry_date, String CardCVV ,String Postal_Code, String Phone_Number, int userId) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("cardNumber", cardNumber);
+        contentValues.put("cardExpiryDate", Card_expiry_date);
+        contentValues.put("cardCVV", CardCVV);
+        contentValues.put("postalCode", Postal_Code);
+        contentValues.put("phoneNumber", Phone_Number);
         contentValues.put("userId", userId);
 
         long result = MyDB.insert("cards", null, contentValues);
@@ -86,9 +116,9 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
     }
 
-    public boolean checkusername(String username) {
+    public boolean checkemail(String email) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
-        Cursor cursor = MyDB.rawQuery("Select * from users where username = ?", new String[]{username});
+        Cursor cursor = MyDB.rawQuery("Select * from users where email = ?", new String[]{email});
         if (cursor.getCount() > 0)
             return true;
         else
@@ -98,6 +128,14 @@ public class DBHelper extends SQLiteOpenHelper {
     public boolean checkadminusername(String username) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
         Cursor cursor = MyDB.rawQuery("Select * from admin where username = ?", new String[]{username});
+        if (cursor.getCount() > 0)
+            return true;
+        else
+            return false;
+    }
+    public boolean checkcard(String cardNumber) {
+        SQLiteDatabase MyDB = this.getWritableDatabase();
+        Cursor cursor = MyDB.rawQuery("Select * from cards where cardNumber = ?", new String[]{cardNumber});
         if (cursor.getCount() > 0)
             return true;
         else
@@ -229,7 +267,17 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.close();
         return id;
     }
-    public void insertSeat(SQLiteDatabase db, String departure, String arrival, String date, int seatNumber, int status, double totalAmount, int parkingId, int userId) {
+
+    public int GetIsPaidId(int locId,int seatNumber,int userId) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT id FROM seats WHERE seatParking = ? and seatNumber = ? and userId = ?", new String[]{String.valueOf(locId), String.valueOf(seatNumber), String.valueOf(userId)});
+        int id = -1;
+        if (cursor.moveToFirst()) id = cursor.getInt(0);
+        cursor.close();
+        sqLiteDatabase.close();
+        return id;
+    }
+    public void insertSeat(SQLiteDatabase db, String departure, String arrival, String date, int seatNumber, int status,int isPaid, double totalAmount, int parkingId, int userId) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("departure", departure);
         contentValues.put("arrival", arrival);
@@ -237,28 +285,23 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("seatNumber",seatNumber);
         contentValues.put("seatStatus", status);
         contentValues.put("totalAmount",totalAmount);
+        contentValues.put("isPaid",isPaid);
         contentValues.put("seatParking", parkingId);
         contentValues.put("userId",userId);
         db.insert("seats", null, contentValues);
     }
-    public Boolean updateSeat(String id, String seatStatus) {
+    public void updateIsPaid(int id, int isPaid) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("seatStatus", seatStatus);
-        Cursor cursor = MyDB.rawQuery("Select * from seats where id = ?", new String[]{id});
-        if (cursor.getCount() > 0) {
-            long result = MyDB.update("seats", contentValues, "id=?", new String[]{id});
-            if (result == -1) return false;
-            else
-                return true;
-        } else {
-            return false;
-        }
+        contentValues.put("isPaid", isPaid);
+        //Cursor cursor = MyDB.rawQuery("Select * from seats where id = ?", new String[]{id});
+        MyDB.update("seats", contentValues, "id=?", new String[]{String.valueOf(id)});
+
     }
-    public Boolean checkSeats(int seatParking,int seatNumber,String date) {
+    public Boolean checkSeats(int seatParking,int seatNumber,String date,int isPaid) {
         SQLiteDatabase MyDB = this.getWritableDatabase();
 
-        Cursor cursor = MyDB.rawQuery("Select * from seats where  seatNumber=? and seatStatus = ? and seatParking = ? and date = ?", new String[]{String.valueOf(seatNumber), String.valueOf(1), String.valueOf(seatParking),date});
+        Cursor cursor = MyDB.rawQuery("Select * from seats where  seatNumber=? and seatStatus = ? and seatParking = ? and date = ? and isPaid = ?", new String[]{String.valueOf(seatNumber), String.valueOf(1), String.valueOf(seatParking),date, String.valueOf(isPaid)});
         if (cursor.getCount() > 0) {
             return true;
         } else {
@@ -333,4 +376,6 @@ public class DBHelper extends SQLiteOpenHelper {
         else
             return false;
     }
+
+
 }

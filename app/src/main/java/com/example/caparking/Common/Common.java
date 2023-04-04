@@ -2,39 +2,24 @@ package com.example.caparking.Common;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Looper;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.caparking.Model.MyPlaces;
 import com.example.caparking.Model.Results;
-import com.example.caparking.R;
 import com.example.caparking.Remote.IGoogleAPIService;
 import com.example.caparking.Remote.RetrofitClient;
-import com.example.caparking.Remote.RetrofitScalarClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class Common {
     private static double latitude;
@@ -55,10 +40,6 @@ public class Common {
 
     public static IGoogleAPIService getGoogleAPIService()   {
         return RetrofitClient.getClient(GOOGLE_API_URL).create(IGoogleAPIService.class);
-    }
-
-    public static IGoogleAPIService getGoogleAPIServiceScalars()   {
-        return RetrofitScalarClient.getScalarClient(GOOGLE_API_URL).create(IGoogleAPIService.class);
     }
 
 

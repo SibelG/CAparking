@@ -120,7 +120,7 @@ public class UpdateParkingArea extends FragmentActivity implements OnMapReadyCal
         binding.findButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                nearByPlaces("parking");
+                //nearByPlaces("parking");
             }
         });
         binding.button.setOnClickListener(new View.OnClickListener() {
@@ -202,7 +202,7 @@ public class UpdateParkingArea extends FragmentActivity implements OnMapReadyCal
     }
 
 
-    private void nearByPlaces(final String placeType) {
+   /* private void nearByPlaces(final String placeType) {
         if(mMap!=null) {
             mMap.clear();
             String url = Common.getUrl(latitude, longitude, placeType);
@@ -256,7 +256,7 @@ public class UpdateParkingArea extends FragmentActivity implements OnMapReadyCal
                         }
                     });
         }
-    }
+    }*/
 
     @SuppressLint("RestrictedApi")
     private void buildLocationRequest() {

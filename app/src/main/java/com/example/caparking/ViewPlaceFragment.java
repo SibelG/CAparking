@@ -39,7 +39,7 @@ import retrofit2.Response;
 @AndroidEntryPoint
 public class ViewPlaceFragment extends Fragment {
 
-    @Inject
+
     SessionManager manager;
     IGoogleAPIService mService;
     DBHelper DB;
@@ -143,16 +143,14 @@ public class ViewPlaceFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        ((MapsActivity)getActivity()).setNavigationVisibility(true);
+
         DB = new DBHelper(requireContext());
         manager = new SessionManager(requireContext());
         mService = Common.getGoogleAPIService();
 
 
     }
-
-
-
-
 
     public void parkingSlot() {
         int id = DB.GetLocId(binding.placesName.getText().toString());

@@ -4,10 +4,24 @@
 
 
     <item
-        android:id="@+id/action_parking"
+        android:id="@+id/action_home"
         android:enabled="true"
-        android:title="Parking Garage"
-        android:icon="@drawable/parking"
+        android:title="Menü"
+        android:icon="@drawable/ic_baseline_home_24"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_favorites"
+        android:enabled="true"
+        android:title="Favorites"
+        android:icon="@drawable/ic_baseline_favorite_border_24"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:enabled="true"
+        android:title="Settings"
+        android:icon="@drawable/ic_baseline_settings_24"
         app:showAsAction="always"/>
 
 

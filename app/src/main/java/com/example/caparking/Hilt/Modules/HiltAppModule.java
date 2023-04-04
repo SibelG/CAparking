@@ -27,8 +27,8 @@ public class HiltAppModule {
         return new NetworkRequest.Builder().addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build();
     }
 
-    @Provides
+    /*@Provides
     SessionManager ProvideSharedPreferencesManager(@ApplicationContext Context context) {
         return new SessionManager(context);
-    }
+    }*/
 }

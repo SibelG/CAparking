@@ -8,7 +8,7 @@
     android:gravity="center"
     android:background="#FFFFFF"
     android:padding="30dp"
-    tools:context=".Signup">
+    tools:context=".SignUpActivity">
 
     <TextView
         android:id="@+id/textView6"
@@ -48,6 +48,7 @@
         android:textColor="@color/black"
         android:textColorHint="#6F6E6E"
         android:textSize="25dp"
+        android:inputType="textEmailAddress"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -100,20 +101,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"></Button>
-
-    <Button
-        android:id="@+id/btn2"
-        android:layout_width="127dp"
-        android:layout_height="43dp"
-        android:text="Back"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.031"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.002"
-        tools:ignore="TouchTargetSizeCheck"></Button>
 
     <ImageView
         android:id="@+id/imageView13"

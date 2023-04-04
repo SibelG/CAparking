@@ -32,7 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class CardsFragment extends Fragment {
 
     //Users Session
-    @Inject
+
     SessionManager manager;
 
     private RecyclerView card_list_view;
@@ -56,6 +56,7 @@ public class CardsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MapsActivity)getActivity()).setNavigationVisibility(true);
         manager = new SessionManager(requireContext());
 
     }

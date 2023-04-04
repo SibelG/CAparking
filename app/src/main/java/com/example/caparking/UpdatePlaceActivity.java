@@ -37,7 +37,7 @@ import retrofit2.Response;
 @AndroidEntryPoint
 public class UpdatePlaceActivity extends AppCompatActivity {
 
-    @Inject
+
     SessionManager manager;
     IGoogleAPIService mService;
     DBHelper DB;

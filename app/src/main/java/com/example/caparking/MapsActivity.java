@@ -1,15 +1,7 @@
 package com.example.caparking;
 
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -17,18 +9,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
+
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,6 +49,7 @@ public class MapsActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_maps);
 
 
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -74,9 +65,11 @@ public class MapsActivity extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
 
         header = navigationView.getHeaderView(0);
+        sessionManager = new SessionManager(this);
 
         navView = findViewById(R.id.bottom_navigation);
-        setupBottomNavigationView();
+        navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        replaceFragment(new MapsFragment());
 
 
     }
@@ -111,6 +104,9 @@ public class MapsActivity extends AppCompatActivity implements
         if (id == R.id.action_settings) {
             return true;
         }
+        if(id== R.id.action_home){
+            return  true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -129,20 +125,24 @@ public class MapsActivity extends AppCompatActivity implements
             frag = new PurchaseFragment();
         } else if (itemId == R.id.nav_profile) {
             frag = new ProfileFragment();
-        } else if (itemId == R.id.nav_security) {
-            frag = new MapsFragment();
+        } else if (itemId == R.id.nav_notify) {
+            frag = new NotifyFragment();
         } else if (itemId == R.id.nav_card) {
             frag = new CardsFragment();
 
         } else if (itemId == R.id.nav_about) {
             frag = new AboutFragment();
 
+        }
+        else if (itemId == R.id.nav_favorites) {
+            frag = new FavoritesFragment();
 
-        } else if (itemId == R.id.nav_logout) {
+
+        }else if (itemId == R.id.nav_logout) {
 
             //getApplicationContext().getSharedPreferences(LoginActivity.MY_PREFERENCES, 0).edit().clear().commit();
             sessionManager.logOut();
-            Intent intent = new Intent(this, Login.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
 
@@ -164,39 +164,35 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
-    private void setupBottomNavigationView() {
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        NavController navController = navHostFragment.getNavController();
-        NavigationUI.setupWithNavController(navView, navController);
-    }
 
-        /*if (id == R.id.nav_itinerary) {
-            Intent intent = new Intent(this, PurchaseFragment.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_profile) {
-            Intent intent = new Intent(this, ProfileFragment.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_security) {
-            Intent intent = new Intent(this, SecurityFragment.class);
-            startActivity(intent);
 
-        } else if (id == R.id.nav_about) {
-            Intent intent = new Intent(this, AboutFragment.class);
-            startActivity(intent);
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
-        } else if (id == R.id.nav_logout) {
-
-            //getApplicationContext().getSharedPreferences(LoginActivity.MY_PREFERENCES, 0).edit().clear().commit();
-            sessionManager.logOut();
-            Intent intent = new Intent(this, Login.class);
-            startActivity(intent);
-            finish();
-
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_home:
+                    replaceFragment(new MapsFragment());
+                    return true;
+                case R.id.action_favorites:
+                    replaceFragment(new FavoritesFragment());
+                    return true;
+                case R.id.action_settings:
+                    replaceFragment(new SettingsFragment());
+                    return true;
+            }
+            return false;
         }
 
+    };
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;*/
+    private void replaceFragment(Fragment fragment){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.nav_host_fragment, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
 
 }

@@ -57,6 +57,7 @@ public class SeatSelection extends Fragment implements View.OnClickListener {
     private int tempHour,tempMinute;
     private String oneWayDepartureDate, roundDepartureDate, roundReturnDate;
     private boolean isValidRoundDate = true;
+    public boolean isSelectDate = false;
     ImageButton c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,
     c11,c12,c13,c14,c15,c16,c17,c18,c19,c20,c21,c22,c23,c24,c25,
     c26,c27,c28,c29,c30,c31,c32;
@@ -171,11 +172,6 @@ public class SeatSelection extends Fragment implements View.OnClickListener {
                 if(isValidRoundInput()){
                     bookFlight();
 
-                    /*Intent i = new Intent(SeatSelection.this, payment_activity.class);
-                    getIntent().putExtra("totalPrice",totalFare);
-                    startActivity(i);*/
-
-
                 }
 
             }
@@ -188,6 +184,11 @@ public class SeatSelection extends Fragment implements View.OnClickListener {
         currentHour = calendar.get(Calendar.HOUR_OF_DAY);
         currentMinute = calendar.get(Calendar.MINUTE);
         //round trip departure date picker on click listener
+
+        //binding.etChooseDepartureTime.setVisibility(View.INVISIBLE);
+
+
+
         binding.btnRoundDepartureDatePicker.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -624,7 +625,7 @@ public class SeatSelection extends Fragment implements View.OnClickListener {
             Log.d("seat", String.valueOf(seatCount));
 
             for (int i=0;i<seatCount+1;i++){
-                boolean check = DB.checkSeats(parkingID,i,date);
+                boolean check = DB.checkSeats(parkingID,i,date,1);
                 if(check){
                     setColorGRAY(i);
                     Log.d("seatNumber", String.valueOf(i));
@@ -641,6 +642,7 @@ public class SeatSelection extends Fragment implements View.OnClickListener {
     public void onStart() {
         super.onStart();
 
+
     }
 
     public void bookFlight(){
@@ -650,10 +652,14 @@ public class SeatSelection extends Fragment implements View.OnClickListener {
             parkingDate = binding.btnRoundDepartureDatePicker.getText().toString();
 
             manager.createSeatSession(getArguments().getString("parkName"),flagChecked,returnTime, String.valueOf(totalFare));
-            DB.insertSeat(db, departureTime, returnTime,parkingDate,flagChecked,1,totalFare,parkingID,userID);
-            //bookFlightDialog().show();
+            DB.insertSeat(db, departureTime, returnTime,parkingDate,flagChecked,1,0,totalFare,parkingID,userID);
+            int seatId = DB.GetIsPaidId(parkingID,flagChecked,userID);
+            Log.d("seatId", String.valueOf(seatId));
 
             PaymentFragment ldf = new PaymentFragment ();
+            Bundle args = new Bundle();
+            args.putInt("isPaid", seatId);
+            ldf.setArguments(args);
             getFragmentManager().beginTransaction().add(R.id.nav_host_fragment, ldf).commit();
 
 
@@ -665,7 +671,7 @@ public class SeatSelection extends Fragment implements View.OnClickListener {
     private TimePickerDialog showTimeDialog(int timePickerId)
     {
 
-
+        final Calendar newDate = Calendar.getInstance();
         switch (timePickerId) {
             case ROUND_DEPARTURE_TIME_PICKER:
 
@@ -677,9 +683,17 @@ public class SeatSelection extends Fragment implements View.OnClickListener {
                                 } else {
                                     amPm = "AM";
                                 }
+                                newDate.set(tempYear,tempMonth,tempDay,hourOfDay,minutes,0);
+                                Calendar tem = Calendar.getInstance();
+                                Log.w("TIME",System.currentTimeMillis()+"");
+                                if(newDate.getTimeInMillis()-tem.getTimeInMillis()>0)
+                                    //textView.setText(newDate.getTime().toString());
+                                    binding.etChooseDepartureTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
+                                else
+                                    Toast.makeText(requireContext(),"Invalid time",Toast.LENGTH_SHORT).show();
                                 tempHour = hourOfDay;
                                 tempMinute = minutes;
-                                binding.etChooseDepartureTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
+
                             }
                         }, currentHour, currentMinute, false);
 
@@ -698,7 +712,7 @@ public class SeatSelection extends Fragment implements View.OnClickListener {
                                 }
                                 String departureDate = tempHour + ":" + tempMinute;
                                 String returnDate = hourOfDay+ ":" + minutes;
-                                Toast.makeText(requireContext(),departureDate,Toast.LENGTH_SHORT).show();
+
 
                                 if (HelperUtilities.compareTime(departureDate, returnDate)) {
                                     timePickerAlert().show();
@@ -819,6 +833,8 @@ public class SeatSelection extends Fragment implements View.OnClickListener {
                 //get round trip departure date here
                 roundDepartureDate = startYear + "-" + (startMonth + 1) + "-" + startDay;
                 binding.btnRoundDepartureDatePicker.setText(HelperUtilities.formatDate(startYear, startMonth, startDay));
+                binding.etChooseDepartureTime.setVisibility(View.VISIBLE);
+                isSelectDate = true;
                 date = binding.btnRoundDepartureDatePicker.getText().toString();
                 checkIsBooking(date);
             }

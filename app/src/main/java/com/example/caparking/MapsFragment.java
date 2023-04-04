@@ -2,6 +2,7 @@ package com.example.caparking;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.navigation.NavController;
 
@@ -38,6 +40,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -52,7 +55,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 @AndroidEntryPoint
-public class MapsFragment extends Fragment implements OnMapReadyCallback {
+public class MapsFragment extends Fragment implements OnMapReadyCallback{
 
 
     private static final int MY_PERMISSION_CODE = 1000;
@@ -71,6 +74,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     LocationCallback locationCallback;
     private NavController navController;
     private FragmentMapsBinding binding;
+    MainViewModel viewModel;
+    ProgressDialog progressDialog;
+    Handler handler;
 
     public MapsFragment() {
         // Required empty public constructor
@@ -83,11 +89,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         sessionManager = new SessionManager(requireContext());
         DB = new DBHelper(requireContext());
-
-
-
 
         mService = Common.getGoogleAPIService();
 
@@ -100,16 +105,22 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
+        ((MapsActivity)getActivity()).setNavigationVisibility(true);
+        MapsInitializer.initialize(getActivity());
         binding = FragmentMapsBinding.inflate(
                 inflater, container, false);
         View view = binding.getRoot();
+        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+
+
+        //MapsInitializer.initialize(getActivity(), MapsInitializer.Renderer.LEGACY, this);
+
         SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Common.checkLocationPermission(requireContext());
+            Common.checkLocationPermission(requireActivity());
         }
 
         buildLocationRequest();
@@ -118,18 +129,30 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
         fusedLocationProviderClient.requestLocationUpdates(mLocationRequest,locationCallback, Looper.myLooper());
 
-        Handler handler = new Handler();
+
+
+
+        progressDialog = new ProgressDialog(requireContext());
+        progressDialog.setTitle("Please wait..");
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Currently showing the location");
+        handler = new Handler();
+
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        nearByPlaces("parking");
+                        //nearByPlaces("parking");
+                        viewModel.setMarkerLocation(latitude,longitude,"parking");
                     }
                 });
             }
         }, 2000);
+
+        getParking();
+
         //here data must be an instance of the class MarsDataProvider
         return view;
     }
@@ -173,6 +196,21 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         };
     }
 
+    public void getParking(){
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //nearByPlaces("parking");
+                        getLocationViewModel("parking");
+                    }
+                });
+            }
+        }, 3000);
+    }
+
     @SuppressLint("RestrictedApi")
     private void buildLocationRequest() {
         mLocationRequest = new LocationRequest();
@@ -181,11 +219,66 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         mLocationRequest.setSmallestDisplacement(10f);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
     }
+    private void getLocationViewModel(String placeType) {
+        if(mMap!=null) {
+            mMap.clear();
+            viewModel.getMarker().observe(this, currentPlace->{
+                if(currentPlace!=null){
+                    currentPlaces = currentPlace;
+                }else{
+                    Toast.makeText(requireContext(), "Oops, can't currentPlace find!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            viewModel.getMarkerLocation().observe(this, modelResults -> {
+                if (modelResults.length != 0) {
 
+                    //get multiple marker
+                    getMarker(modelResults, placeType);
+                    progressDialog.dismiss();
+                } else {
+                    Toast.makeText(requireContext(), "Oops, can't location find!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+    }
+    private void getMarker(Results[] modelResultsArrayList,String placeType) {
+
+        for (int i = 0; i < modelResultsArrayList.length; i++) {
+            MarkerOptions markerOptions = new MarkerOptions();
+            //Results googlePlaces = response.body().getResults()[i];
+            Results googlePlaces = modelResultsArrayList[i];
+
+            double lat = Double.parseDouble(googlePlaces.getGeometry().getLocation().getLat());
+            double lng = Double.parseDouble(googlePlaces.getGeometry().getLocation().getLng());
+
+            String placeName = googlePlaces.getName();
+            String vicinity = googlePlaces.getVicinity();
+            LatLng latLng = new LatLng(lat, lng);
+            markerOptions.position(latLng);
+            markerOptions.title(placeName);
+            Log.d("T", placeName);
+
+            insertAreas(32,12.5,placeName);
+            if (placeType.equals("parking")) {
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.parking));
+            } else {
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            }
+
+            markerOptions.snippet(String.valueOf(i));
+
+            mMap.addMarker(markerOptions);
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        }
+    }
     private void nearByPlaces(final String placeType) {
         if(mMap!=null) {
             mMap.clear();
             String url = Common.getUrl(latitude, longitude, placeType);
+            Log.d("url1",url);
 
             mService.getNearByPlaces(url)
                     .enqueue(new Callback<MyPlaces>() {
@@ -193,6 +286,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                         public void onResponse(Call<MyPlaces> call, Response<MyPlaces> response) {
 
                             currentPlaces = response.body();
+
 
                             if (response.isSuccessful()) {
                                 for (int i = 0; i < response.body().getResults().length; i++) {
@@ -278,7 +372,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             mMap.setMyLocationEnabled(true);
         }
 
-
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -287,14 +380,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
                     Common.currentResults = currentPlaces.getResults()[Integer.parseInt(marker.getSnippet())];
                     replaceFragment();
-                    //startActivity(new Intent(MapsActivity.this, ViewPlaceActivity.class));
-                    //startActivity(new Intent(MapsActivity.this, UpdatePlaceActivity.class));
-                    /*if(getCallingActivity().getClassName()!=null){
-                        if(getCallingActivity().getClassName().equals(AdminPanel.class.getName())){
-
-                        }
-
-                    }*/
 
                 }
                 return true;
@@ -322,4 +407,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+
 }

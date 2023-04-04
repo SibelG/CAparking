@@ -52,4 +52,5 @@
             android:id="@+id/action_mapsFragment_to_viewPlaceFragment"
             app:destination="@id/viewPlaceFragment" />
     </fragment>
+
 </navigation>
